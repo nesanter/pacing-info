@@ -1,0 +1,16 @@
+.pi-colorscheme {
+	--cif-color1: #2d3436;
+	--cif-color2: #f8f8f8;
+	--cif-color3: #c8c8c8;
+	--cif-color4: #2f8d98;
+	--cif-color5: #ffffff;
+}
+
+body {
+	color: var(--cif-color1);
+	background-color: var(--cif-color5);
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 13px;
+	margin-left: 12px;
+	margin-right: 12px;
+}
