@@ -10,10 +10,13 @@ const app = function () {
 	};
 	
 	const settings = {
+    ap: null,
 		coursekey: null,
     numweeks: null
 	};
 	
+  var fullPacingInfo = null;
+  
 	//---------------------------------------
 	// get things going
 	//----------------------------------------
@@ -28,10 +31,19 @@ const app = function () {
 			_setNotice('Failed to initialize - invalid parameters');
 		} else {
 			_setNotice('');
-      _getPacingInfo(settings.coursekey, settings.numweeks, _setNotice, _renderPage);
+      _getPacingInfo(settings.coursekey, settings.numweeks, _setNotice, _processPacingInfo);
 		}
 	}
 	
+  function _processPacingInfo(jsonData) {
+    fullPacingInfo = jsonData;
+    if (settings.ap) {
+      _renderPacingGuideAP();
+    } else {
+      _renderPacingGuide();
+    }
+  }
+  
 	//-------------------------------------------------------------------------------------
 	// query params:
 	//------------------------------------------------  -------------------------------------
@@ -42,6 +54,7 @@ const app = function () {
 		var urlParams = new URLSearchParams(window.location.search);
 		params.coursekey = urlParams.has('coursekey') ? urlParams.get('coursekey') : null;
     params.numweeks = urlParams.has('numweeks') ? urlParams.get('numweeks') : null;
+    params.ap = urlParams.has('ap');
 
 		settings.coursekey = params.coursekey;
     settings.numweeks = params.numweeks;
@@ -56,15 +69,78 @@ const app = function () {
 	//-----------------------------------------------------------------------------
 	// page rendering
 	//-----------------------------------------------------------------------------
-	function _renderPage() {
-    var html = ''
+	function _renderPacingGuide() {
+    var pacing = fullPacingInfo.pacing;
+    var headerLabels = ['Week', 'Unit / Module', 'Lessons and Assignments', 'Complete?<br>Yes or No'];
+    var borderClass = 'pi-border';
     
-    html += 'Parameters' + '<br>';
-    html += 'coursekey = ' + settings.coursekey + '<br>';
-    html += 'numweeks = ' + settings.numweeks + '<br>';
+    _renderPacingGuideTitle();
     
-    page.contents.innerHTML = html;
+    var elemTable = document.createElement('table');
+    elemTable.classList.add(borderClass);
+
+    var elemHeadRow = document.createElement('tr');
+    elemHeadRow.classList.add(borderClass);
+
+    for (var i = 0; i < headerLabels.length; i++) {
+      var cell = document.createElement('th');
+      cell.innerHTML = headerLabels[i];
+      cell.classList.add(borderClass);
+      cell.classList.add('pi-header');
+      if (i == 3) cell.classList.add('pi-center-text');
+      elemHeadRow.appendChild(cell);
+    }
+    elemTable.appendChild(elemHeadRow);
+    
+    for (var i = 0; i < settings.numweeks; i++) {
+      var weekKey = (i + 1) + '';
+      var weekInfo = pacing[weekKey];
+      
+      for (var j = 0; j < weekInfo.length; j++) {
+        var elemRow = document.createElement('tr');
+        elemRow.classList.add(borderClass);
+        if (i % 2 == 0) {
+          elemRow.classList.add('pi-even-row');
+        } else {
+          elemRow.classList.add('pi-odd-row');
+        }
+        
+        var cell1 = document.createElement('td');
+        var cell2 = document.createElement('td');
+        var cell3 = document.createElement('td');
+        var cell4 = document.createElement('td');
+        
+        cell1.classList.add(borderClass);
+        cell1.classList.add('pi-center-text');
+        cell2.classList.add(borderClass);
+        cell3.classList.add(borderClass);
+        if (weekInfo[j].progresscheck) cell3.classList.add('pi-progress-check');
+        if (!weekInfo[j].graded) cell3.classList.add('pi-notgraded');
+        cell4.classList.add(borderClass);
+        
+        cell1.innerHTML = weekKey;
+        cell2.innerHTML = weekInfo[j].unit;
+        cell3.innerHTML = weekInfo[j].item;
+        cell4.innerHTML = '';
+        
+        elemRow.appendChild(cell1);
+        elemRow.appendChild(cell2);
+        elemRow.appendChild(cell3);
+        elemRow.appendChild(cell4);
+     
+        elemTable.appendChild(elemRow);
+      }
+    }
+    
+    page.contents.appendChild(elemTable);
 	}	
+  
+  function _renderPacingGuideTitle() {
+    var elemTitle = document.createElement('div');
+    elemTitle.classList.add('pi-title');
+    elemTitle.innerHTML = fullPacingInfo.coursename + ' ' + settings.numweeks + ' Week Pacing Guide';
+    page.contents.appendChild(elemTitle);
+  }
 		
 	//------------------------------------------------------------------
 	// handlers

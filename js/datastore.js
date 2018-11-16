@@ -10,7 +10,7 @@ const API_KEY = 'MVpacinginfoAPI';
 	url += datasetname && datasetname !== null ? '&dataset=' + datasetname : '';
 	url += coursekey && coursekey !== null ? '&coursekey=' + coursekey : '';
 	url += numweeks && numweeks !== null ? '&numweeks=' + numweeks : '';
-	console.log('buildApiUrl: url=' + url);
+	//console.log('buildApiUrl: url=' + url);
 	
 	return url;
 }
@@ -24,8 +24,8 @@ function _getPacingInfo (coursekey, numweeks, notice, callback) {
 	fetch(_buildApiUrl('pacinginfo', coursekey, numweeks))
 		.then((response) => response.json())
 		.then((json) => {
-			console.log('json.status=' + json.status);
-			console.log('json.data: ' + JSON.stringify(json.data));
+			//console.log('json.status=' + json.status);
+			//console.log('json.data: ' + JSON.stringify(json.data));
 			if (json.status !== 'success') {
 				notice('Unable to retrieve pacing info for ' + coursekey + ' (' + numweeks + ' weeks) : ' + json.message);
 			} else {
