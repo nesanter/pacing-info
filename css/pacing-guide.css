@@ -1,17 +1,23 @@
 .pi-colorscheme {
-	--cif-color1: #000000;
-	--cif-color2: #ffffff;
-  --cif-color3: #cccccc;
-  
+	--pi-color1: #000000;
+	--pi-color2: #ffffff;
+  --pi-color3: #dddddd;
+  --pi-color4: #1503ff;
 }
 
 body {
-	color: var(--cif-color1);
-	background-color: var(--cif-color2);
+	color: var(--pi-color1);
+	background-color: var(--pi-color2);
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-size: 13px;
 	margin-left: 12px;
 	margin-right: 12px;
+}
+
+.pi-notice {
+	color: blue;
+	font-size: 14px;
+	font-style: italic;
 }
 
 .pi-title {
@@ -21,7 +27,7 @@ body {
 }
 
 .pi-border {
-  border: 1px solid var(--cif-color1);
+  border: 1px solid var(--pi-color1);
   border-collapse: collapse;
 }
 
@@ -35,18 +41,23 @@ td.pi-center-text {
 }
 
 tr.pi-odd-row {
-  background-color: var(--cif-color3);
+  background-color: var(--pi-color3);
 }
 
 tr.pi-even-row {
-  background-color: var(--cif-color2);
+  background-color: var(--pi-color2);
+}
+
+td.pi-graded {
+  font-weight: bold;
 }
 
 td.pi-notgraded {
-  font-style: italic;
+  
 }
 
 td.pi-progress-check {
   font-weight: bold;
   font-style: italic;
+  color: var(--pi-color4);
 }

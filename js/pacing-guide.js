@@ -1,8 +1,6 @@
 //
 //
 const app = function () {
-	const PAGE_TITLE = 'Pacing info'
-		
 	const page = {
 		body: null,
     notice: null,
@@ -41,7 +39,10 @@ const app = function () {
   
 	//-------------------------------------------------------------------------------------
 	// query params:
-	//------------------------------------------------  -------------------------------------
+  //
+  //  coursekey: short course name, e.g. fpa, javascript
+  //  numweeks:  10, 12, or 18
+	//-------------------------------------------------------------------------------------
 	function _initializeSettings() {
 		var result = false;
 
@@ -98,7 +99,11 @@ const app = function () {
         cell2.classList.add(borderClass);
         cell3.classList.add(borderClass);
         if (weekInfo[j].progresscheck) cell3.classList.add('pi-progress-check');
-        if (!weekInfo[j].graded) cell3.classList.add('pi-notgraded');
+        if (weekInfo[j].graded) {
+          cell3.classList.add('pi-graded');
+        } else {
+          cell3.classList.add('pi-notgraded');
+        }
         cell4.classList.add(borderClass);
         
         cell1.innerHTML = weekKey;
@@ -166,6 +171,7 @@ const app = function () {
       var month = objDate.getMonth() + 1;
       formattedDate = days[dayofweek] + ' ' + month + "/" + day;
     }
+    
     return formattedDate;
   }
 		
