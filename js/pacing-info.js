@@ -10,7 +10,6 @@ const app = function () {
 	};
 	
 	const settings = {
-    ap: null,
 		coursekey: null,
     numweeks: null
 	};
@@ -37,11 +36,7 @@ const app = function () {
 	
   function _processPacingInfo(jsonData) {
     fullPacingInfo = jsonData;
-    if (settings.ap) {
-      _renderPacingGuideAP();
-    } else {
-      _renderPacingGuide();
-    }
+    _renderPacingGuide();
   }
   
 	//-------------------------------------------------------------------------------------
@@ -54,7 +49,6 @@ const app = function () {
 		var urlParams = new URLSearchParams(window.location.search);
 		params.coursekey = urlParams.has('coursekey') ? urlParams.get('coursekey') : null;
     params.numweeks = urlParams.has('numweeks') ? urlParams.get('numweeks') : null;
-    params.ap = urlParams.has('ap');
 
 		settings.coursekey = params.coursekey;
     settings.numweeks = params.numweeks;
@@ -71,26 +65,15 @@ const app = function () {
 	//-----------------------------------------------------------------------------
 	function _renderPacingGuide() {
     var pacing = fullPacingInfo.pacing;
-    var headerLabels = ['Week', 'Unit / Module', 'Lessons and Assignments', 'Complete?<br>Yes or No'];
+    var apCourse = fullPacingInfo.apcourse;
     var borderClass = 'pi-border';
     
-    _renderPacingGuideTitle();
+    page.contents.appendChild(_buildPacingGuideTitle());
     
     var elemTable = document.createElement('table');
     elemTable.classList.add(borderClass);
 
-    var elemHeadRow = document.createElement('tr');
-    elemHeadRow.classList.add(borderClass);
-
-    for (var i = 0; i < headerLabels.length; i++) {
-      var cell = document.createElement('th');
-      cell.innerHTML = headerLabels[i];
-      cell.classList.add(borderClass);
-      cell.classList.add('pi-header');
-      if (i == 3) cell.classList.add('pi-center-text');
-      elemHeadRow.appendChild(cell);
-    }
-    elemTable.appendChild(elemHeadRow);
+    elemTable.appendChild(_buildPacingGuideHeaderRow());
     
     for (var i = 0; i < settings.numweeks; i++) {
       var weekKey = (i + 1) + '';
@@ -121,7 +104,11 @@ const app = function () {
         cell1.innerHTML = weekKey;
         cell2.innerHTML = weekInfo[j].unit;
         cell3.innerHTML = weekInfo[j].item;
-        cell4.innerHTML = '';
+        if (apCourse) {
+          cell4.innerHTML = _formatDueDate(weekInfo[j].duedate);
+        } else {
+          cell4.innerHTML = '';
+        }
         
         elemRow.appendChild(cell1);
         elemRow.appendChild(cell2);
@@ -135,11 +122,51 @@ const app = function () {
     page.contents.appendChild(elemTable);
 	}	
   
-  function _renderPacingGuideTitle() {
+  function _buildPacingGuideTitle() {
     var elemTitle = document.createElement('div');
     elemTitle.classList.add('pi-title');
     elemTitle.innerHTML = fullPacingInfo.coursename + ' ' + settings.numweeks + ' Week Pacing Guide';
-    page.contents.appendChild(elemTitle);
+    return elemTitle;
+  }
+  
+  function _buildPacingGuideHeaderRow() {
+    var apCourse = fullPacingInfo.apcourse;
+    var headerLabels = ['Week', 'Unit / Module', 'Lessons and Assignments', 'Complete?<br>Yes or No', 'Due Date<br>by 11:59pm'];
+    var borderClass = 'pi-border';
+
+    var elemHeadRow = document.createElement('tr');
+    elemHeadRow.classList.add(borderClass);
+
+    for (var i = 0; i < headerLabels.length - 1; i++) {
+      var cell = document.createElement('th');
+      if (i <= 2) {
+        cell.innerHTML = headerLabels[i];
+      } else if (apCourse) {
+        cell.innerHTML = headerLabels[4];
+      } else {
+        cell.innerHTML = headerLabels[3];
+      }
+      cell.classList.add(borderClass);
+      cell.classList.add('pi-header');
+      if (i == 3) cell.classList.add('pi-center-text');
+      elemHeadRow.appendChild(cell);
+    }
+    
+    return elemHeadRow;
+  }
+  
+  function _formatDueDate(duedate) {
+    var formattedDate = '';
+    
+    if (duedate != null && duedate != '') {
+      var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      objDate = new Date(duedate);
+      var dayofweek = objDate.getDay();
+      var day = objDate.getDate() + 1;
+      var month = objDate.getMonth() + 1;
+      formattedDate = days[dayofweek] + ' ' + month + "/" + day;
+    }
+    return formattedDate;
   }
 		
 	//------------------------------------------------------------------
