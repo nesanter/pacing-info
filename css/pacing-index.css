@@ -1,0 +1,31 @@
+.pidx-colorscheme {
+	--pidx-color1: #000000;
+	--pidx-color2: #ffffff;
+  --pidx-color3: #dddddd;
+  --pidx-color4: #1503ff;
+}
+
+body {
+	color: var(--pidx-color1);
+	background-color: var(--pidx-color2);
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 13px;
+	margin-left: 12px;
+	margin-right: 12px;
+}
+
+.pidx-notice {
+	color: blue;
+	font-size: 14px;
+	font-style: italic;
+}
+
+.pidx-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.pidx-border {
+  border: 1px solid var(--pidx-color1);
+}

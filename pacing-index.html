@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Pacing Index</title>
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	<link rel="stylesheet" href="css/pacing-index.css">
+</head>
+
+<body class="pidx-colorscheme">
+	<div id="notice" class="pidx-notice"></div>
+	<span id="contents">	
+    <div class="container-fluid">
+      <div class="row">
+        <div id="navigation" class="col pidx-border"> </div>
+      </div>
+      
+      <div class="row">
+        <div class="col pidx-border">
+          <iframe id="announcements"
+                  width="504" 
+                  height="447"  
+                  src="https://docs.google.com/presentation/d/e/2PACX-1vT0-9YqMVJ45Th4EEPzxLK-IBnsOAUuL9Ol-M4eePu_oX_iyvbdKqbWwIuqGaxZ9Bg5Lb3tD3AdVi7q/embed?start=false&amp;loop=false&amp;delayms=3000#slide=3" 
+                  frameborder="0" 
+                  allowfullscreen="true" 
+                  mozallowfullscreen="true" 
+                  webkitallowfullscreen="true">
+          </iframe>
+        </div>
+        <div id='pacing' class="col-sm pidx-border"> </div>
+    </div>        
+  </span>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+		      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+	        crossorigin="anonymous"></script>	
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" 
+          integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" 
+          crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" 
+          integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" 
+          crossorigin="anonymous"></script>
+
+	<script src="js/pacing-index.js"></script>
+	<script src="js/datastore.js"></script>
+	
+	<script>
+		document.addEventListener('DOMContentLoaded', app.init);
+	</script>
+</body>
+</html>
