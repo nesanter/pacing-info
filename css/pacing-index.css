@@ -3,6 +3,7 @@
 	--pidx-color2: #ffffff;
   --pidx-color3: #dddddd;
   --pidx-color4: #1503ff;
+  --pidx-color5: #ff0000;
 }
 
 body {
@@ -28,4 +29,38 @@ body {
 
 .pidx-border {
   border: 1px solid var(--pidx-color1);
+}
+
+.pidx-pacingcontainer {
+  display: inline-block;
+  padding-right: 10px;
+  background-color: var(--pidx-color3);
+  border-radius: 10px;
+
+  border: 1px solid red;
+}
+
+.pidx-pacingheader {
+  font-size: 15px;
+  font-weight: bold;
+  margin-left: 6px;
+}
+
+.pidx-pacingitemtitle {
+  margin-left: 6px;
+}
+
+.pidx-pacingitem {
+  display: list-item;
+  list-style-type: disc;
+  margin-left: 26px;
+} 
+
+.pidx-pacinggraded {
+  color: var(--pidx-color5);
+}
+
+.pidx-progress-check {
+  font-style: italic;
+  color: var(--pidx-color4);
 }

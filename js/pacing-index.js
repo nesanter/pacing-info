@@ -1,12 +1,14 @@
 //
 // TODO: set up query params
-// TODO: use pacing API to retrieve
 // TODO: format and post pacing info in setWeek
 // TODO: refactor for query params and generalization
 // TODO: play with demo announcement slides for size and such
 // TODO: commonize identification of current week for each start date and the start/end date pairings
 // TODO: include color-coding and key (or similar) in nav section
 // TODO: pretty up formatting
+// TODO: make pacing info toggle-able
+// TODO: make size of announcements iframe configurable
+// TODO: make configuration tool to generate embeddable code for this "package"
 //
 const app = function () {
 	const page = {
@@ -20,7 +22,11 @@ const app = function () {
 	
 	const settings = {
 		coursekey: null,
-    numweeks: null
+    numweeks: null,
+    weeknum: null,
+    urlAnnouncementsBase: null,
+    announcementsWidth: null,
+    announcementsHeight: null
 	};
 	
   var fullPacingInfo = null;
@@ -48,10 +54,7 @@ const app = function () {
 	
   function _processPacingInfo(jsonData) {
     fullPacingInfo = jsonData;
-    _renderNavigation();
-    _renderAnnouncements();
-    _setWeek(1);
-   /* _renderPacingGuide();*/
+    _renderPacingIndex();
   }
   
 	//-------------------------------------------------------------------------------------
@@ -75,14 +78,27 @@ const app = function () {
 			result = true;
 		}
 
+    // parameterize these
+    settings.weeknum = 1;
+    settings.urlAnnouncementsBase = 'https://docs.google.com/presentation/d/e/2PACX-1vTLXCiT2X9QX71zuMly2wDhIt4aSIOS9KpXTOStvL6nw0o4V726dAyX0rPYPKlM-uO4ifln5PAoZ0dO/embed?rm=minimal&start=false&amp;loop=false&amp;delayms=3000;rm=minimal';
+    settings.announcementsWidth = 600;
+    settings.announcementsHeight = 532;
+
 		return result;
 	}
 	
 	//-----------------------------------------------------------------------------
 	// page rendering
 	//-----------------------------------------------------------------------------
+  function _renderPacingIndex() {
+    _renderNavigation();
+    _renderAnnouncements();
+    _renderPacingDetails();
+    //_setWeek(1);
+  }
+  
   function _renderNavigation() {
-    for (var i = 1; i < 5; i++) {
+    for (var i = 1; i <= settings.numweeks; i++) {
       var elemNavButton = document.createElement('button');
       elemNavButton.id = 'btnWeek' + i;
       elemNavButton.innerHTML = "week " + i;
@@ -92,126 +108,56 @@ const app = function () {
   }
 
   function _renderAnnouncements() {
-    page.announcements.width = 504;
-    page.announcements.height = 447;
-   // page.announcements.src = 'https://docs.google.com/presentation/d/e/2PACX-1vTLXCiT2X9QX71zuMly2wDhIt4aSIOS9KpXTOStvL6nw0o4V726dAyX0rPYPKlM-uO4ifln5PAoZ0dO/embed?rm=minimal&start=false&amp;loop=false&amp;delayms=3000';
+    page.announcements.width = settings.announcementsWidth;
+    page.announcements.height = settings.announcementsHeight;
     page.announcements.frameborder = 0;
     page.announcements.allowfullscreen = true;
     page.announcements.mozallowfullscreen = true;
     page.announcements.webkitallowfullscreen = true;
+    
+    var newSrc = settings.urlAnnouncementsBase + '#' + settings.weeknum;
+    page.announcements.src = newSrc;
   }
   
-	function _renderPacingGuide() {
-    var pacing = fullPacingInfo.pacing;
-    var apCourse = fullPacingInfo.apcourse;
-    var borderClass = 'pi-border';
+  function _renderPacingDetails() {
+    var idTitle = 'pacingDetailsTitle';
+    var idList = 'pacingDetailsList';
+    var elemTitle = document.getElementById(idTitle);
+    var elemList = document.getElementById(idList);
+    if (elemTitle != null) elemTitle.parentNode.removeChild(elemTitle);
+    if (elemList != null) elemList.parentNode.removeChild(elemList);
     
-    page.contents.appendChild(_buildPacingGuideTitle());
+    var pacingWeek = fullPacingInfo.pacing[settings.weeknum];
+    elemTitle = document.createElement('p');
+    elemTitle.id = idTitle;
+    elemTitle.innerHTML = 'Pacing for week #' + settings.weeknum;
+    elemTitle.classList.add('pidx-pacingheader');
+    page.pacing.appendChild(elemTitle);
     
-    var elemTable = document.createElement('table');
-    elemTable.classList.add(borderClass);
-
-    elemTable.appendChild(_buildPacingGuideHeaderRow());
+    var unit = '**dummy**';
+    elemList = document.createElement('dl');
+    elemList.id = idList;
     
-    for (var i = 0; i < settings.numweeks; i++) {
-      var weekKey = (i + 1) + '';
-      var weekInfo = pacing[weekKey];
+    for (var i = 0; i < pacingWeek.length; i++) {
+      if (unit != pacingWeek[i].unit) {
+        unit = pacingWeek[i].unit;
+        var elemDefTitle = document.createElement('dt');
+        elemDefTitle.innerHTML = unit;
+        elemDefTitle.classList.add('pidx-pacingitemtitle');
+        elemList.appendChild(elemDefTitle);
+      }
       
-      for (var j = 0; j < weekInfo.length; j++) {
-        var elemRow = document.createElement('tr');
-        elemRow.classList.add(borderClass);
-        if (i % 2 == 0) {
-          elemRow.classList.add('pi-even-row');
-        } else {
-          elemRow.classList.add('pi-odd-row');
-        }
-        
-        var cell1 = document.createElement('td');
-        var cell2 = document.createElement('td');
-        var cell3 = document.createElement('td');
-        var cell4 = document.createElement('td');
-        
-        cell1.classList.add(borderClass);
-        cell1.classList.add('pi-center-text');
-        cell2.classList.add(borderClass);
-        cell3.classList.add(borderClass);
-        if (weekInfo[j].progresscheck) cell3.classList.add('pi-progress-check');
-        if (weekInfo[j].graded) {
-          cell3.classList.add('pi-graded');
-        } else {
-          cell3.classList.add('pi-notgraded');
-        }
-        cell4.classList.add(borderClass);
-        
-        cell1.innerHTML = weekKey;
-        cell2.innerHTML = weekInfo[j].unit;
-        cell3.innerHTML = weekInfo[j].item;
-        if (apCourse) {
-          cell4.innerHTML = _formatDueDate(weekInfo[j].duedate);
-        } else {
-          cell4.innerHTML = '';
-        }
-        
-        elemRow.appendChild(cell1);
-        elemRow.appendChild(cell2);
-        elemRow.appendChild(cell3);
-        elemRow.appendChild(cell4);
-     
-        elemTable.appendChild(elemRow);
-      }
+      var elemDefItem = document.createElement('dd');
+      elemDefItem.innerHTML = pacingWeek[i].item;
+      elemDefItem.classList.add('pidx-pacingitem');
+      if (pacingWeek[i].graded) elemDefItem.classList.add('pidx-pacinggraded');
+      if (pacingWeek[i].progresscheck) elemDefItem.classList.add('pidx-progress-check');
+      elemList.appendChild(elemDefItem);
     }
     
-    page.contents.appendChild(elemTable);
-	}	
-  
-  function _buildPacingGuideTitle() {
-    var elemTitle = document.createElement('div');
-    elemTitle.classList.add('pi-title');
-    elemTitle.innerHTML = fullPacingInfo.coursename + ' ' + settings.numweeks + ' Week Pacing Guide';
-    return elemTitle;
+    page.pacing.appendChild(elemList);
   }
-  
-  function _buildPacingGuideHeaderRow() {
-    var apCourse = fullPacingInfo.apcourse;
-    var headerLabels = ['Week', 'Unit / Module', 'Lessons and Assignments', 'Complete?<br>Yes or No', 'Due Date<br>by 11:59pm'];
-    var borderClass = 'pi-border';
-
-    var elemHeadRow = document.createElement('tr');
-    elemHeadRow.classList.add(borderClass);
-
-    for (var i = 0; i < headerLabels.length - 1; i++) {
-      var cell = document.createElement('th');
-      if (i <= 2) {
-        cell.innerHTML = headerLabels[i];
-      } else if (apCourse) {
-        cell.innerHTML = headerLabels[4];
-      } else {
-        cell.innerHTML = headerLabels[3];
-      }
-      cell.classList.add(borderClass);
-      cell.classList.add('pi-header');
-      if (i == 3) cell.classList.add('pi-center-text');
-      elemHeadRow.appendChild(cell);
-    }
     
-    return elemHeadRow;
-  }
-  
-  function _formatDueDate(duedate) {
-    var formattedDate = '';
-    
-    if (duedate != null && duedate != '') {
-      var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-      objDate = new Date(duedate);
-      var dayofweek = objDate.getDay();
-      var day = objDate.getDate() + 1;
-      var month = objDate.getMonth() + 1;
-      formattedDate = days[dayofweek] + ' ' + month + "/" + day;
-    }
-    
-    return formattedDate;
-  }
-		
 	//------------------------------------------------------------------
 	// handlers
 	//------------------------------------------------------------------  
@@ -220,16 +166,9 @@ const app = function () {
   }
   
 	function _setWeek(weeknum) {
-    var urlAnnouncementsBase = 'https://docs.google.com/presentation/d/e/2PACX-1vTLXCiT2X9QX71zuMly2wDhIt4aSIOS9KpXTOStvL6nw0o4V726dAyX0rPYPKlM-uO4ifln5PAoZ0dO/embed?rm=minimal&start=false&amp;loop=false&amp;delayms=3000;rm=minimal';
-    var newSrc = urlAnnouncementsBase + '#' + weeknum;
-    console.log("weeknum=" + weeknum);
-    page.announcements.src = newSrc;
-    
-    var pacingWeek = fullPacingInfo.pacing[weeknum];
-    console.log(JSON.stringify(pacing));
-    var html = 'pacing for week #' + weeknum + '<br>';
-    html += JSON.stringify(pacingWeek);
-    page.pacing.innerHTML = html;
+    settings.weeknum = weeknum;
+    _renderAnnouncements();
+    _renderPacingDetails();
   }
   
 	//---------------------------------------
@@ -268,6 +207,21 @@ const app = function () {
 		displayMenu('show');
 	};		
   
+  function _formatDueDate(duedate) {
+    var formattedDate = '';
+    
+    if (duedate != null && duedate != '') {
+      var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      objDate = new Date(duedate);
+      var dayofweek = objDate.getDay();
+      var day = objDate.getDate() + 1;
+      var month = objDate.getMonth() + 1;
+      formattedDate = days[dayofweek] + ' ' + month + "/" + day;
+    }
+    
+    return formattedDate;
+  }
+		
 	return {
 		init: init
  	};
