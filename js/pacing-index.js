@@ -82,7 +82,7 @@ const app = function () {
     settings.weeknum = 1;
     settings.urlAnnouncementsBase = 'https://docs.google.com/presentation/d/e/2PACX-1vTLXCiT2X9QX71zuMly2wDhIt4aSIOS9KpXTOStvL6nw0o4V726dAyX0rPYPKlM-uO4ifln5PAoZ0dO/embed?rm=minimal&start=false&amp;loop=false&amp;delayms=3000;rm=minimal';
     settings.announcementsWidth = 600;
-    settings.announcementsHeight = 532;
+    settings.announcementsHeight = 450;
 
 		return result;
 	}
