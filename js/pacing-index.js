@@ -92,19 +92,26 @@ const app = function () {
 	//-----------------------------------------------------------------------------
   function _renderPacingIndex() {
     _renderNavigation();
-    _renderAnnouncements();
-    _renderPacingDetails();
-    //_setWeek(1);
+    //_renderAnnouncements();
+    //_renderPacingDetails();
+    _setWeek(1);
   }
   
   function _renderNavigation() {
     for (var i = 1; i <= settings.numweeks; i++) {
-      var elemNavButton = document.createElement('button');
-      elemNavButton.id = 'btnWeek' + i;
-      elemNavButton.innerHTML = "week " + i;
-      elemNavButton.addEventListener('click', makeSetWeekFunction(i), false);
+      var elemNavButton = _makeButton(
+        _navButtonId(i),
+        'pidx-navbutton', 
+        'week ' + i, 
+        'support and pacing for week #' + i, 
+        makeSetWeekFunction(i));
       page.navigation.appendChild(elemNavButton);
+      if (i == 10) page.navigation.appendChild(document.createElement('br'));
     }  
+  }
+  
+  function _navButtonId(weeknum) {
+    return 'btnWeek' + weeknum;
   }
 
   function _renderAnnouncements() {
@@ -162,11 +169,28 @@ const app = function () {
 	// handlers
 	//------------------------------------------------------------------  
   function makeSetWeekFunction(weeknum) {
-    return function() { _setWeek(weeknum); }
+    return function() {
+      _setWeek(weeknum); 
+    }
   }
   
 	function _setWeek(weeknum) {
+    var selectedClass = 'pidx-navbuttonselected';
+    
     settings.weeknum = weeknum;
+
+    for (var i = 1; i <= settings.numweeks; i++) {
+      var id = _navButtonId(i);
+      var btn = document.getElementById(id);
+
+      if (btn.classList.contains(selectedClass)) {
+        btn.classList.remove(selectedClass);
+      }
+      if (i == settings.weeknum) {
+        btn.classList.add(selectedClass);
+      }
+    }
+    
     _renderAnnouncements();
     _renderPacingDetails();
   }

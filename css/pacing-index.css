@@ -4,44 +4,53 @@
   --pidx-color3: #dddddd;
   --pidx-color4: #1503ff;
   --pidx-color5: #ff0000;
+  --pidx-MV-darkteal: #115e6e;
 }
 
 body {
 	color: var(--pidx-color1);
 	background-color: var(--pidx-color2);
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-size: 13px;
+	font-size: 11px;
 	margin-left: 12px;
 	margin-right: 12px;
 }
 
 .pidx-notice {
 	color: blue;
-	font-size: 14px;
 	font-style: italic;
 }
 
-.pidx-title {
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 20px;
+.pidx-contents {
+  display: flex;
+  flex-direction: row;
 }
 
-.pidx-border {
+.pidx-navigationcontainer {
+  display: inline-block;
+}
+
+.pidx-navbutton {
+  width: 58px;
+  font-size: 11px;
   border: 1px solid var(--pidx-color1);
+  border-radius: 8px;
+}
+
+.pidx-navbuttonselected {
+  background-color: var(--pidx-MV-darkteal);
+  color: var(--pidx-color2);
 }
 
 .pidx-pacingcontainer {
-  display: inline-block;
   padding-right: 10px;
   background-color: var(--pidx-color3);
+  border: 1px solid var(--pidx-color1);
   border-radius: 10px;
-
-  border: 1px solid red;
 }
 
 .pidx-pacingheader {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: bold;
   margin-left: 6px;
 }

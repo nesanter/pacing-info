@@ -10,12 +10,22 @@
 
 <body class="pidx-colorscheme">
 	<div id="notice" class="pidx-notice"></div>
-  
-  <div id="navigation" class="navigation-container"></div>
-	<div id="contents" class="pidx-contents">	
-    <iframe id="announcements" class="pidx-border"> </iframe>
-    <div id="pacing" class="pidx-pacingcontainer pidx-border"> </div>     
-  </div>
+	<span id="contents">	
+    <div class="flex-container">
+
+      <div class="row justify-content-start">
+      
+        <div class="col">
+          <div id="navigation" class="navigation-container"></div>
+          <iframe id='announcements'> </iframe>
+        </div>
+        
+        <div class='col'>
+          <div id='pacing' class='pidx-pacingcontainer'> </div>
+        </div>
+      </div>
+    </div>        
+  </span>
 
   <script src="https://code.jquery.com/jquery-3.3.1.min.js"
 		      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
