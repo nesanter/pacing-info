@@ -1,8 +1,6 @@
 //
 // TODO: set up query params
-// TODO: format and post pacing info in setWeek
 // TODO: refactor for query params and generalization
-// TODO: play with demo announcement slides for size and such
 // TODO: commonize identification of current week for each start date and the start/end date pairings
 // TODO: include color-coding and key (or similar) in nav section
 // TODO: pretty up formatting
@@ -70,17 +68,20 @@ const app = function () {
 		var urlParams = new URLSearchParams(window.location.search);
 		params.coursekey = urlParams.has('coursekey') ? urlParams.get('coursekey') : null;
     params.numweeks = urlParams.has('numweeks') ? urlParams.get('numweeks') : null;
+    params.announce = urlParams.has('announce') ? urlParams.get('announce') : null;
 
 		settings.coursekey = params.coursekey;
     settings.numweeks = params.numweeks;
-		
-		if (params.coursekey != null && params.numweeks != null) {
+		settings.urlAnnouncementsBase = params.announce + '&rm=minimal'; // rm parameter eliminates control bar from slides
+    //settings.urlAnnouncementsBase = 'https://docs.google.com/presentation/d/e/2PACX-1vTLXCiT2X9QX71zuMly2wDhIt4aSIOS9KpXTOStvL6nw0o4V726dAyX0rPYPKlM-uO4ifln5PAoZ0dO/embed?rm=minimal&start=false&amp;loop=false&amp;delayms=3000;rm=minimal';
+    
+    console.log(settings.urlAnnouncementsBase);
+		if (params.coursekey != null && params.numweeks != null && params.announce != null) {
 			result = true;
 		}
 
-    // parameterize these
+    // ?? parameterize these
     settings.weeknum = 1;
-    settings.urlAnnouncementsBase = 'https://docs.google.com/presentation/d/e/2PACX-1vTLXCiT2X9QX71zuMly2wDhIt4aSIOS9KpXTOStvL6nw0o4V726dAyX0rPYPKlM-uO4ifln5PAoZ0dO/embed?rm=minimal&start=false&amp;loop=false&amp;delayms=3000;rm=minimal';
     settings.announcementsWidth = 600;
     settings.announcementsHeight = 450;
 
@@ -92,8 +93,6 @@ const app = function () {
 	//-----------------------------------------------------------------------------
   function _renderPacingIndex() {
     _renderNavigation();
-    //_renderAnnouncements();
-    //_renderPacingDetails();
     _setWeek(1);
   }
   
@@ -127,6 +126,7 @@ const app = function () {
   }
   
   function _renderPacingDetails() {
+    var apCourse = fullPacingInfo.apcourse;
     var idTitle = 'pacingDetailsTitle';
     var idList = 'pacingDetailsList';
     var elemTitle = document.getElementById(idTitle);
@@ -138,6 +138,12 @@ const app = function () {
     elemTitle = document.createElement('p');
     elemTitle.id = idTitle;
     elemTitle.innerHTML = 'Pacing for week #' + settings.weeknum;
+    if (apCourse) {
+      var elemDueDate = document.createElement('span');
+      elemDueDate.classList.add('pidx-duedate');
+      elemDueDate.innerHTML = ' (due by ' + _formatDueDate(pacingWeek[0].duedate) + ')';
+      elemTitle.appendChild(elemDueDate);
+    }
     elemTitle.classList.add('pidx-pacingheader');
     page.pacing.appendChild(elemTitle);
     
@@ -218,18 +224,7 @@ const app = function () {
 		btn.title = tooltip;
 		btn.addEventListener('click', listener, false);
 		return btn;
-	}
-	
-	function displayMenu(command) {
-		page.menu.style.display = (command == "show" ? "block" : "none");
-		page.menuitem.innerHTML = settings.contextmenuitem.name;
-	};
-
-	function setMenuPosition(left, top) {
-		page.menu.style.left = left.toString() + 'px';
-		page.menu.style.top = top.toString() + 'px';
-		displayMenu('show');
-	};		
+	}	
   
   function _formatDueDate(duedate) {
     var formattedDate = '';

@@ -73,3 +73,9 @@ body {
   font-style: italic;
   color: var(--pidx-color4);
 }
+
+.pidx-duedate {
+  color: var(--pidx-color4);
+  font-style: italic;
+  font-weight: bold;
+}
