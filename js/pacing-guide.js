@@ -12,6 +12,15 @@ const app = function () {
     numweeks: null
 	};
 	
+  const termToWeeks = {
+    "semester1": 18,
+    "semester2": 18,
+    "trimester1": 12,
+    "trimester2": 12,
+    "trimester3": 12,
+    "summer": 10
+  };
+  
   var fullPacingInfo = null;
   
 	//---------------------------------------
@@ -28,12 +37,13 @@ const app = function () {
 			_setNotice('Failed to initialize - invalid parameters');
 		} else {
 			_setNotice('');
-      _getPacingInfo(settings.coursekey, settings.numweeks, _setNotice, _processPacingInfo);
+      _getPacingInfo(settings.coursekey, settings.term, _setNotice, _processPacingInfo);
 		}
 	}
 	
   function _processPacingInfo(jsonData) {
-    fullPacingInfo = jsonData;
+    console.log("process");
+    fullPacingInfo = jsonData.pacinginfo;
     _renderPacingGuide();
   }
   
@@ -41,7 +51,7 @@ const app = function () {
 	// query params:
   //
   //  coursekey: short course name, e.g. fpa, javascript
-  //  numweeks:  10, 12, or 18
+  //  term: semester1, semester2, trimester1, trimester2, trimester3, summer
 	//-------------------------------------------------------------------------------------
 	function _initializeSettings() {
 		var result = false;
@@ -49,12 +59,13 @@ const app = function () {
 		var params = {};
 		var urlParams = new URLSearchParams(window.location.search);
 		params.coursekey = urlParams.has('coursekey') ? urlParams.get('coursekey') : null;
-    params.numweeks = urlParams.has('numweeks') ? urlParams.get('numweeks') : null;
+    params.term = urlParams.has('term') ? urlParams.get('term') : null;
 
 		settings.coursekey = params.coursekey;
-    settings.numweeks = params.numweeks;
+    settings.term = params.term;
+    settings.numweeks = termToWeeks[settings.term];
 		
-		if (params.coursekey != null && params.numweeks != null) {
+		if (params.coursekey != null && params.term != null) {
 			result = true;
 		}
 
@@ -109,7 +120,7 @@ const app = function () {
         cell1.innerHTML = weekKey;
         cell2.innerHTML = weekInfo[j].unit;
         cell3.innerHTML = weekInfo[j].item;
-        if (apCourse) {
+        if (apCourse && weekInfo[j].graded) {
           cell4.innerHTML = _formatDueDate(weekInfo[j].duedate);
         } else {
           cell4.innerHTML = '';

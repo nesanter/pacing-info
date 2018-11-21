@@ -6,8 +6,7 @@
 // TODO: pretty up formatting
 // TODO: make pacing info toggle-able
 // TODO: make size of announcements iframe configurable
-// TODO: make configuration tool to generate embeddable code for this "package"
-// TODO: look at AP classes where due dates aren't weekly
+// TODO: make configuration tool to generate BB embeddable code for this "package"
 //
 const app = function () {
 	const page = {
@@ -28,6 +27,15 @@ const app = function () {
     announcementsHeight: null
 	};
 	
+  const termToWeeks = {
+    "semester1": 18,
+    "semester2": 18,
+    "trimester1": 12,
+    "trimester2": 12,
+    "trimester3": 12,
+    "summer": 10
+  };
+    
   var fullPacingInfo = null;
   
 	//---------------------------------------
@@ -47,7 +55,7 @@ const app = function () {
 			_setNotice('Failed to initialize - invalid parameters');
 		} else {
 			_setNotice('');
-      _getPacingInfo(settings.coursekey, settings.numweeks, _setNotice, _processPacingInfo);
+      _getPacingInfo(settings.coursekey, settings.term, _setNotice, _processPacingInfo);
 		}
   }
 	
@@ -60,7 +68,7 @@ const app = function () {
 	// query params:
   //
   //  coursekey: short course name, e.g. fpa, javascript
-  //  numweeks:  10, 12, or 18
+  //  term: semester1, semester2, trimester1, trimester2, trimester3, summar
 	//-------------------------------------------------------------------------------------
 	function _initializeSettings() {
 		var result = false;
@@ -68,15 +76,16 @@ const app = function () {
 		var params = {};
 		var urlParams = new URLSearchParams(window.location.search);
 		params.coursekey = urlParams.has('coursekey') ? urlParams.get('coursekey') : null;
-    params.numweeks = urlParams.has('numweeks') ? urlParams.get('numweeks') : null;
+    params.term = urlParams.has('term') ? urlParams.get('term') : null;
     params.announce = urlParams.has('announce') ? urlParams.get('announce') : null;
 
 		settings.coursekey = params.coursekey;
-    settings.numweeks = params.numweeks;
+    settings.term = params.term;
+    settings.numweeks = termToWeeks[settings.term];
 		settings.urlAnnouncementsBase = params.announce + '&rm=minimal'; // rm parameter eliminates control bar from slides
     //settings.urlAnnouncementsBase = 'https://docs.google.com/presentation/d/e/2PACX-1vTLXCiT2X9QX71zuMly2wDhIt4aSIOS9KpXTOStvL6nw0o4V726dAyX0rPYPKlM-uO4ifln5PAoZ0dO/embed?rm=minimal&start=false&amp;loop=false&amp;delayms=3000;rm=minimal';
     
-    if (params.coursekey != null && params.numweeks != null && params.announce != null) {
+    if (params.coursekey != null && params.term != null && params.announce != null) {
 			result = true;
 		}
 
@@ -126,7 +135,7 @@ const app = function () {
   }
   
   function _renderPacingDetails() {
-    var apCourse = fullPacingInfo.apcourse;
+    var apCourse = fullPacingInfo.pacinginfo.apcourse;
     var idTitle = 'pacingDetailsTitle';
     var idList = 'pacingDetailsList';
     var elemTitle = document.getElementById(idTitle);
@@ -134,7 +143,7 @@ const app = function () {
     if (elemTitle != null) elemTitle.parentNode.removeChild(elemTitle);
     if (elemList != null) elemList.parentNode.removeChild(elemList);
     
-    var pacingWeek = fullPacingInfo.pacing[settings.weeknum];
+    var pacingWeek = fullPacingInfo.pacinginfo.pacing[settings.weeknum];
     elemTitle = document.createElement('p');
     elemTitle.id = idTitle;
     elemTitle.innerHTML = 'Pacing for week #' + settings.weeknum;
@@ -169,7 +178,7 @@ const app = function () {
         var elemDefDueDate = document.createElement('span');
         elemDefDueDate.innerHTML = ' (due ' + _formatDueDate(pacingWeek[i].duedate) + ')';
         elemDefDueDate.classList.add('pidx-duedate');
-        elemDefItem.appendChild(elemDefDueDate);
+        elemDefItem.appendChild(elemDefDueDate);  
       }
       
       elemDefItem.classList.add('pidx-pacingitem');
