@@ -7,6 +7,7 @@
 // TODO: make pacing info toggle-able
 // TODO: make size of announcements iframe configurable
 // TODO: make configuration tool to generate embeddable code for this "package"
+// TODO: look at AP classes where due dates aren't weekly
 //
 const app = function () {
 	const page = {
@@ -75,8 +76,7 @@ const app = function () {
 		settings.urlAnnouncementsBase = params.announce + '&rm=minimal'; // rm parameter eliminates control bar from slides
     //settings.urlAnnouncementsBase = 'https://docs.google.com/presentation/d/e/2PACX-1vTLXCiT2X9QX71zuMly2wDhIt4aSIOS9KpXTOStvL6nw0o4V726dAyX0rPYPKlM-uO4ifln5PAoZ0dO/embed?rm=minimal&start=false&amp;loop=false&amp;delayms=3000;rm=minimal';
     
-    console.log(settings.urlAnnouncementsBase);
-		if (params.coursekey != null && params.numweeks != null && params.announce != null) {
+    if (params.coursekey != null && params.numweeks != null && params.announce != null) {
 			result = true;
 		}
 
@@ -138,12 +138,14 @@ const app = function () {
     elemTitle = document.createElement('p');
     elemTitle.id = idTitle;
     elemTitle.innerHTML = 'Pacing for week #' + settings.weeknum;
+    /*
     if (apCourse) {
       var elemDueDate = document.createElement('span');
       elemDueDate.classList.add('pidx-duedate');
       elemDueDate.innerHTML = ' (due by ' + _formatDueDate(pacingWeek[0].duedate) + ')';
       elemTitle.appendChild(elemDueDate);
     }
+    */
     elemTitle.classList.add('pidx-pacingheader');
     page.pacing.appendChild(elemTitle);
     
@@ -162,8 +164,16 @@ const app = function () {
       
       var elemDefItem = document.createElement('dd');
       elemDefItem.innerHTML = pacingWeek[i].item;
+      
+      if (apCourse && pacingWeek[i].graded) {
+        var elemDefDueDate = document.createElement('span');
+        elemDefDueDate.innerHTML = ' (due ' + _formatDueDate(pacingWeek[i].duedate) + ')';
+        elemDefDueDate.classList.add('pidx-duedate');
+        elemDefItem.appendChild(elemDefDueDate);
+      }
+      
       elemDefItem.classList.add('pidx-pacingitem');
-      if (pacingWeek[i].graded) elemDefItem.classList.add('pidx-pacinggraded');
+      if (!apCourse && pacingWeek[i].graded) elemDefItem.classList.add('pidx-pacinggraded');
       if (pacingWeek[i].progresscheck) elemDefItem.classList.add('pidx-progress-check');
       elemList.appendChild(elemDefItem);
     }
@@ -233,7 +243,7 @@ const app = function () {
       var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
       objDate = new Date(duedate);
       var dayofweek = objDate.getDay();
-      var day = objDate.getDate() + 1;
+      var day = objDate.getDate();
       var month = objDate.getMonth() + 1;
       formattedDate = days[dayofweek] + ' ' + month + "/" + day;
     }
