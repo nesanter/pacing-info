@@ -238,7 +238,6 @@ const app = function () {
       var key = 'start' + (i + 1);
       var origSummary = calendar[key];
       var numWeeks = termToWeeks[origSummary.term];
-      console.log(numWeeks);
       
       var foundWeek = null;
       var foundWeekNum = null;
@@ -258,8 +257,6 @@ const app = function () {
       
       settings.calendarSummary[key] = summary;
     }
-    
-    console.log(JSON.stringify(settings.calendarSummary));
   }  
 	
   //--------------------------------------------------------------------------
