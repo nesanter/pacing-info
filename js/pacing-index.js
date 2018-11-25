@@ -21,7 +21,8 @@ const app = function () {
     urlAnnouncementsBase: null,
     announcementsWidth: null,
     announcementsHeight: null,
-    calendarSummary: null
+    calendarSummary: null,
+    instance: null
 	};
 	
   const termToWeeks = {
@@ -66,7 +67,8 @@ const app = function () {
 	// query params:
   //
   //  coursekey: short course name, e.g. fpa, javascript
-  //  term: semester1, semester2, trimester1, trimester2, trimester3, summar
+  //  term: semester1, semester2, trimester1, trimester2, trimester3, summer
+  //  instance: optional integer indicating which of multiple instances on the page this is
 	//-------------------------------------------------------------------------------------
 	function _initializeSettings() {
 		var result = false;
@@ -76,11 +78,13 @@ const app = function () {
 		params.coursekey = urlParams.has('coursekey') ? urlParams.get('coursekey') : null;
     params.term = urlParams.has('term') ? urlParams.get('term') : null;
     params.announce = urlParams.has('announce') ? urlParams.get('announce') : null;
+    params.instance = urlParams.has('instance') ? urlParams.get('instance') : 1;   // optional - if not provided then assumed 1
 
 		settings.coursekey = params.coursekey;
     settings.term = params.term;
     settings.numweeks = termToWeeks[settings.term];
 		settings.urlAnnouncementsBase = params.announce + '&rm=minimal'; // rm parameter eliminates control bar from slides
+    settings.instance = params.instance;
     //settings.urlAnnouncementsBase = 'https://docs.google.com/presentation/d/e/2PACX-1vTLXCiT2X9QX71zuMly2wDhIt4aSIOS9KpXTOStvL6nw0o4V726dAyX0rPYPKlM-uO4ifln5PAoZ0dO/embed?rm=minimal&start=false&amp;loop=false&amp;delayms=3000;rm=minimal';
     
     if (params.coursekey != null && params.term != null && params.announce != null) {
@@ -348,7 +352,7 @@ const app = function () {
 	// iframe responsive height - post message to parent (if in an iframe) to resizeBy
 	//-----------------------------------------------------------------------------------
 	function _postHeightChangeMessage() {
-		var msg = document.body.scrollHeight + '-' + 'CourseInfoGenerator';
+		var msg = document.body.scrollHeight + '-' + 'PacingIndex' + '-' + settings.instance;
 		console.log('posting to parent: ' + msg);
 		window.parent.postMessage(msg, "*");
 	}
