@@ -287,6 +287,7 @@ const app = function () {
     
     _renderAnnouncements();
     _renderPacingDetails();
+    _postHeightChangeMessage();
   }
   
 	//---------------------------------------
@@ -348,7 +349,7 @@ const app = function () {
 	//-----------------------------------------------------------------------------------
 	function _postHeightChangeMessage() {
 		var msg = document.body.scrollHeight + '-' + 'CourseInfoGenerator';
-		//console.log('posting to parent: ' + msg);
+		console.log('posting to parent: ' + msg);
 		window.parent.postMessage(msg, "*");
 	}
 		
