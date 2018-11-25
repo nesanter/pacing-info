@@ -1,12 +1,7 @@
 //
-// TODO: set up query params
-// TODO: refactor for query params and generalization
-// TODO: commonize identification of current week for each start date and the start/end date pairings
-// TODO: include color-coding and key (or similar) in nav section
-// TODO: pretty up formatting
-// TODO: make pacing info toggle-able
-// TODO: make size of announcements iframe configurable
+// TODO: make pacing info toggle-able (?)
 // TODO: make configuration tool to generate BB embeddable code for this "package"
+// TODO: add resizer code for iframe and/or make size of iframe configurable
 //
 const app = function () {
 	const page = {
@@ -14,6 +9,7 @@ const app = function () {
     notice: null,
     contents: null,
     navigation: null,
+    navigationkey: null,
     announcements: null,
     pacing: null
 	};
@@ -24,7 +20,8 @@ const app = function () {
     weeknum: null,
     urlAnnouncementsBase: null,
     announcementsWidth: null,
-    announcementsHeight: null
+    announcementsHeight: null,
+    calendarSummary: null
 	};
 	
   const termToWeeks = {
@@ -46,6 +43,7 @@ const app = function () {
     page.notice = document.getElementById('notice');
 		page.contents = document.getElementById('contents');
     page.navigation = document.getElementById('navigation');
+    page.navigationkey = document.getElementById('navigationkey');
     page.announcements = document.getElementById('announcements');
     page.pacing = document.getElementById('pacing');						
 		
@@ -101,18 +99,39 @@ const app = function () {
 	// page rendering
 	//-----------------------------------------------------------------------------
   function _renderPacingIndex() {
+    _calculateCurrentWeeks();
     _renderNavigation();
+    _renderNavigationKey();
     _setWeek(1);
   }
   
   function _renderNavigation() {
+    var apCourse = fullPacingInfo.pacinginfo.apcourse;
+    var start1Info = settings.calendarSummary.start1;
+    var start2Info = settings.calendarSummary.start2;
+    var start3Info = settings.calendarSummary.start3;
+    
     for (var i = 1; i <= settings.numweeks; i++) {
       var elemNavButton = _makeButton(
         _navButtonId(i),
         'pidx-navbutton', 
         'week ' + i, 
-        'support and pacing for week #' + i, 
+        '', 
         makeSetWeekFunction(i));
+      
+      if (i == start1Info.currentWeekNum && !apCourse) {
+        elemNavButton.classList.add('pidx-nav-start1')
+        elemNavButton.title = 'start ' + _formatPacingDate(start1Info.startDate) + ', end ' + _formatPacingDate(start1Info.endDate);
+      }
+      if (i == start2Info.currentWeekNum) {
+        elemNavButton.classList.add('pidx-nav-start2')
+        if (!apCourse) elemNavButton.title = 'start ' + _formatPacingDate(start2Info.startDate) + ', end ' + _formatPacingDate(start2Info.endDate);
+      }
+      if (i == start3Info.currentWeekNum && !apCourse) {
+        elemNavButton.classList.add('pidx-nav-start3')
+        elemNavButton.title = 'start ' + _formatPacingDate(start3Info.startDate) + ', end ' + _formatPacingDate(start3Info.endDate);
+      }
+      
       page.navigation.appendChild(elemNavButton);
       if (i == 10) page.navigation.appendChild(document.createElement('br'));
     }  
@@ -120,6 +139,26 @@ const app = function () {
   
   function _navButtonId(weeknum) {
     return 'btnWeek' + weeknum;
+  }
+  
+  function _renderNavigationKey() {
+    if (fullPacingInfo.pacinginfo.apcourse) {
+      page.navigationkey.style.display = 'none';
+      return;
+    }
+    
+    page.navigationkey.innerHTML = 'Pacing key: <br>';
+    var startInfo = [start1Info = settings.calendarSummary.start1, settings.calendarSummary.start2, settings.calendarSummary.start3];
+    var keyClass = ['pidx-nav-start1', 'pidx-nav-start2', 'pidx-nav-start3'];
+    
+    for (var i = 0; i < 3; i++) {
+      var elemKey = document.createElement('span');
+      elemKey.innerHTML = 'start ' + _formatPacingDate(startInfo[i].startDate) + ', end ' + _formatPacingDate(startInfo[i].endDate);
+      elemKey.style.paddingRight = '10px';
+      //if (i < 2) elemKey.innerHTML += '<br>';
+      elemKey.classList.add(keyClass[i]);
+      page.navigationkey.appendChild(elemKey);
+    }
   }
 
   function _renderAnnouncements() {
@@ -147,14 +186,6 @@ const app = function () {
     elemTitle = document.createElement('p');
     elemTitle.id = idTitle;
     elemTitle.innerHTML = 'Pacing for week #' + settings.weeknum;
-    /*
-    if (apCourse) {
-      var elemDueDate = document.createElement('span');
-      elemDueDate.classList.add('pidx-duedate');
-      elemDueDate.innerHTML = ' (due by ' + _formatDueDate(pacingWeek[0].duedate) + ')';
-      elemTitle.appendChild(elemDueDate);
-    }
-    */
     elemTitle.classList.add('pidx-pacingheader');
     page.pacing.appendChild(elemTitle);
     
@@ -173,16 +204,19 @@ const app = function () {
       
       var elemDefItem = document.createElement('dd');
       elemDefItem.innerHTML = pacingWeek[i].item;
-      
-      if (apCourse && pacingWeek[i].graded) {
+      elemDefItem.classList.add('pidx-pacingitem');   
+        
+      if (pacingWeek[i].graded) {
         var elemDefDueDate = document.createElement('span');
-        elemDefDueDate.innerHTML = ' (due ' + _formatDueDate(pacingWeek[i].duedate) + ')';
         elemDefDueDate.classList.add('pidx-duedate');
+        if (apCourse) {
+          elemDefDueDate.innerHTML = ' (due ' + _formatDueDate(pacingWeek[i].duedate) + ')';
+        } else {
+          elemDefDueDate.innerHTML = ' (graded)';
+        }
         elemDefItem.appendChild(elemDefDueDate);  
       }
-      
-      elemDefItem.classList.add('pidx-pacingitem');
-      if (!apCourse && pacingWeek[i].graded) elemDefItem.classList.add('pidx-pacinggraded');
+  
       if (pacingWeek[i].progresscheck) elemDefItem.classList.add('pidx-progress-check');
       elemList.appendChild(elemDefItem);
     }
@@ -190,9 +224,47 @@ const app = function () {
     page.pacing.appendChild(elemList);
   }
     
-	//------------------------------------------------------------------
-	// handlers
-	//------------------------------------------------------------------  
+  //-------------------------------------------------------------------------
+  // determine what week number(s) based on course type and pacing calendar
+	//-------------------------------------------------------------------------
+  function _calculateCurrentWeeks() {
+    var calendar = fullPacingInfo.pacingcalendar;
+    var now = new Date();
+    
+    settings.calendarSummary = {};
+    
+    for (var i = 0; i < 3; i++) {
+      var summary = {};
+      var key = 'start' + (i + 1);
+      var origSummary = calendar[key];
+      var numWeeks = termToWeeks[origSummary.term];
+      console.log(numWeeks);
+      
+      var foundWeek = null;
+      var foundWeekNum = null;
+      for (var week = numWeeks; week > 0 && foundWeek == null; week--) {
+        var weekKey = 'week' + week;
+        var weekData = new Date(origSummary[weekKey]);
+        if (now >= weekData) {
+          foundWeek = weekData;
+          foundWeekNum = week;
+        }
+      }
+      
+      summary.startDate = origSummary.startdate;
+      summary.endDate = origSummary.enddate;
+      summary.currentWeek = foundWeek;
+      summary.currentWeekNum = foundWeekNum;
+      
+      settings.calendarSummary[key] = summary;
+    }
+    
+    console.log(JSON.stringify(settings.calendarSummary));
+  }  
+	
+  //--------------------------------------------------------------------------
+  // handlers
+	//--------------------------------------------------------------------------
   function makeSetWeekFunction(weeknum) {
     return function() {
       _setWeek(weeknum); 
@@ -255,6 +327,19 @@ const app = function () {
       var day = objDate.getDate();
       var month = objDate.getMonth() + 1;
       formattedDate = days[dayofweek] + ' ' + month + "/" + day;
+    }
+    
+    return formattedDate;
+  }
+  
+  function _formatPacingDate(pacingdate) {
+    var formattedDate = '';
+    
+    if (pacingdate != null & pacingdate != '') {
+      objDate = new Date(pacingdate);
+      var day = objDate.getDate();
+      var month = objDate.getMonth() + 1;
+      formattedDate = month + "/" + day;
     }
     
     return formattedDate;

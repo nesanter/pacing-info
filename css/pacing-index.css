@@ -5,6 +5,9 @@
   --pidx-color4: #1503ff;
   --pidx-color5: #ff0000;
   --pidx-MV-darkteal: #115e6e;
+  --pidx-color-start1: red;
+  --pidx-color-start2: blue;
+  --pidx-color-start3: #16c405;
 }
 
 body {
@@ -26,8 +29,19 @@ body {
   flex-direction: row;
 }
 
-.pidx-navigationcontainer {
+.pidx-navigation-container {
   display: inline-block;
+  vertical-align: top;
+  border: 1px solid blue;
+}
+
+.pidx-navigationkey-container {
+  display: inline-block;
+  vertical-align: top;
+  margin-left: 15px;
+  padding-left: 5px;
+  border: 1px solid var(--pidx-color1);
+  border-radius: 8px;
 }
 
 .pidx-navbutton {
@@ -38,8 +52,23 @@ body {
 }
 
 .pidx-navbuttonselected {
-  background-color: var(--pidx-MV-darkteal);
-  color: var(--pidx-color2);
+  background-color: var(--pidx-color2);
+  font-weight: bold;
+}
+
+.pidx-nav-start1 {
+  color: var(--pidx-color-start1);
+  border-color: var(--pidx-color-start1);
+}
+
+.pidx-nav-start2 {
+  color: var(--pidx-color-start2);
+  border-color: var(--pidx-color-start2);
+}
+
+.pidx-nav-start3 {
+  color: var(--pidx-color-start3);
+  border-color: var(--pidx-color-start3);
 }
 
 .pidx-pacingcontainer {
@@ -64,10 +93,6 @@ body {
   list-style-type: disc;
   margin-left: 26px;
 } 
-
-.pidx-pacinggraded {
-  color: var(--pidx-color5);
-}
 
 .pidx-progress-check {
   font-style: italic;
