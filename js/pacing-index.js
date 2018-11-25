@@ -147,7 +147,7 @@ const app = function () {
       return;
     }
     
-    page.navigationkey.innerHTML = 'Pacing key: <br>';
+    page.navigationkey.innerHTML = 'Pacing key: ';
     var startInfo = [start1Info = settings.calendarSummary.start1, settings.calendarSummary.start2, settings.calendarSummary.start3];
     var keyClass = ['pidx-nav-start1', 'pidx-nav-start2', 'pidx-nav-start3'];
     
