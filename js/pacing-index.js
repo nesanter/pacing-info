@@ -341,6 +341,16 @@ const app = function () {
     
     return formattedDate;
   }
+  
+  	
+	//-----------------------------------------------------------------------------------
+	// iframe responsive height - post message to parent (if in an iframe) to resizeBy
+	//-----------------------------------------------------------------------------------
+	function _postHeightChangeMessage() {
+		var msg = document.body.scrollHeight + '-' + 'CourseInfoGenerator';
+		//console.log('posting to parent: ' + msg);
+		window.parent.postMessage(msg, "*");
+	}
 		
 	return {
 		init: init
