@@ -1,7 +1,6 @@
 //
 // TODO: make pacing info toggle-able (?)
 // TODO: make configuration tool to generate BB embeddable code for this "package"
-// TODO: add resizer code for iframe and/or make size of iframe configurable
 //
 const app = function () {
 	const page = {
@@ -79,12 +78,16 @@ const app = function () {
     params.term = urlParams.has('term') ? urlParams.get('term') : null;
     params.announce = urlParams.has('announce') ? urlParams.get('announce') : null;
     params.instance = urlParams.has('instance') ? urlParams.get('instance') : 1;   // optional - if not provided then assumed 1
+    params.awidth = urlParams.has('awidth') ? urlParams.get('awidth') : 600;  // optional - if not provided then the default
+    params.aheight = urlParams.has('aheight') ? urlParams.get('aheight') : 450;  // optional - if not provided then the default
 
 		settings.coursekey = params.coursekey;
     settings.term = params.term;
     settings.numweeks = termToWeeks[settings.term];
 		settings.urlAnnouncementsBase = params.announce + '&rm=minimal'; // rm parameter eliminates control bar from slides
     settings.instance = params.instance;
+    settings.announcementsWidth = params.awidth;
+    settings.announcementsHeight = params.aheight;
     //settings.urlAnnouncementsBase = 'https://docs.google.com/presentation/d/e/2PACX-1vTLXCiT2X9QX71zuMly2wDhIt4aSIOS9KpXTOStvL6nw0o4V726dAyX0rPYPKlM-uO4ifln5PAoZ0dO/embed?rm=minimal&start=false&amp;loop=false&amp;delayms=3000;rm=minimal';
     
     if (params.coursekey != null && params.term != null && params.announce != null) {
@@ -92,9 +95,7 @@ const app = function () {
 		}
 
     // ?? parameterize these
-    settings.weeknum = 1;
-    settings.announcementsWidth = 600;
-    settings.announcementsHeight = 450;
+    settings.weeknum = 1;  // announcement week displayed on load
 
 		return result;
 	}
