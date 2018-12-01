@@ -1,6 +1,5 @@
 //
-// TODO: make pacing info toggle-able (?)
-// TODO: make configuration tool to generate BB embeddable code for this "package"
+// TODO: add AP handling and summer handling (single start date)
 //
 const app = function () {
 	const page = {
@@ -83,9 +82,22 @@ const app = function () {
   function _processPacingInfo(jsonData) {
     pacingCalendar = jsonData;
     
-    var weekList = _buildWeekList(new Date(pacingCalendar.start1.week1), new Date(pacingCalendar.start3['week' + settings.numweeks]));
+    var startweek = new Date(pacingCalendar.start1.week1);
+    if (settings.ap) {
+      startweek = new Date(pacingCalendar.start2.week1);
+    }
+      
+    var endweek = null;
+    if (settings.ap) {
+      endweek = new Date(pacingCalendar.start2['week' + settings.numweeks]);
+    } else if (settings.term == 'summer') {
+      endweek = new Date(pacingCalendar.start1['week' + settings.numweeks]);
+    } else {
+      endweek = new Date(pacingCalendar.start3['week' + settings.numweeks]);
+    }
+      
+    var weekList = _buildWeekList(startweek, endweek);
     var mappedWeeks = _mapWeeks(weekList, pacingCalendar);
-    console.log(JSON.stringify(mappedWeeks));
     
     _renderPacingCalendar(mappedWeeks);
   }
@@ -107,8 +119,14 @@ const app = function () {
     for (var key in weeklist) {
       var matchingWeeks = [];
       for (var i = 0; i < 3; i++) {
-        var section = calendar['start' + (i + 1)];
-        matchingWeeks.push(weekMatchingData(key, section));
+        var skipSection = (i == 0 && settings.ap) || 
+                          (i == 2 && settings.ap) ||
+                          (i == 1 && settings.term == 'summer') ||
+                          (i == 2 && settings.term == 'summer');
+        if (!skipSection) { 
+          var section = calendar['start' + (i + 1)];
+          matchingWeeks.push(weekMatchingData(key, section));
+        }
       }
       mapped[key] = matchingWeeks;
     }
@@ -131,8 +149,34 @@ const app = function () {
   //-----------------------------------------------------------------------------
 	// page rendering
 	//-----------------------------------------------------------------------------
-  function _renderPacingCalendar(mappedWeeks) {  
+  function _renderPacingCalendar(mappedWeeks) { 
+    page.contents.appendChild(_renderPacingCalendarTitle());  
     page.contents.appendChild(_renderPacingCalendarTable(mappedWeeks));
+  }
+  
+  function _renderPacingCalendarTitle() {
+    var termToText = {
+      "semester1": "semester 1",
+      "semester2": "semester 2",
+      "trimester1": "trimester 1",
+      "trimester2": "trimester 2",
+      "trimester3": "trimester 3",
+      "summar": "summer"
+    }
+    var elemTitle = document.createElement('div');
+    
+    var elemText = document.createElement('h3');
+    var html = 'Pacing calendar (' + termToText[settings.term];
+    if (settings.ap) {
+      html += ' - AP';
+    }
+    html += ')';
+    elemText.innerHTML = html;
+    
+    elemTitle.appendChild(elemText);
+    elemTitle.appendChild(document.createElement('hr'));
+    
+    return elemTitle;
   }
   
   function _renderPacingCalendarTable(mappedWeeks) {
@@ -148,31 +192,40 @@ const app = function () {
 	
   function _renderPacingCalendarHeader() {
     var elemHeaderRow = document.createElement('tr');
+    var startDate = null;
+    var endDate = null;
     
     var elemCell = document.createElement('th');
     elemCell.innerHTML = 'Date';
     elemHeaderRow.appendChild(elemCell);
      
     elemCell = document.createElement('th');
-    var startDate = _formatPacingWeekDate(pacingCalendar.start1.startdate);
-    var endDate = _formatPacingWeekDate(pacingCalendar.start1.enddate);
-    elemCell.innerHTML = 'Start: ' + startDate + '<br>';
-    elemCell.innerHTML += 'End: ' + endDate;
-    elemHeaderRow.appendChild(elemCell);
-     
-    elemCell = document.createElement('th');
-    startDate = _formatPacingWeekDate(pacingCalendar.start2.startdate);
-    endDate = _formatPacingWeekDate(pacingCalendar.start2.enddate);
-    elemCell.innerHTML = 'Start: ' + startDate + '<br>';
-    elemCell.innerHTML += 'End: ' + endDate;
-    elemHeaderRow.appendChild(elemCell);
-     
-    elemCell = document.createElement('th');
-    startDate = _formatPacingWeekDate(pacingCalendar.start3.startdate);
-    endDate = _formatPacingWeekDate(pacingCalendar.start3.enddate);
-    elemCell.innerHTML = 'Start: ' + startDate + '<br>';
-    elemCell.innerHTML += 'End: ' + endDate;
-    elemHeaderRow.appendChild(elemCell);
+    
+    if (!settings.ap) {
+      startDate = _formatPacingWeekDate(pacingCalendar.start1.startdate);
+      endDate = _formatPacingWeekDate(pacingCalendar.start1.enddate);
+      elemCell.innerHTML = 'Start: ' + startDate + '<br>';
+      elemCell.innerHTML += 'End: ' + endDate;
+      elemHeaderRow.appendChild(elemCell);
+    }
+    
+    if (settings.term != 'summer') {
+      elemCell = document.createElement('th');
+      startDate = _formatPacingWeekDate(pacingCalendar.start2.startdate);
+      endDate = _formatPacingWeekDate(pacingCalendar.start2.enddate);
+      elemCell.innerHTML = 'Start: ' + startDate + '<br>';
+      elemCell.innerHTML += 'End: ' + endDate;
+      elemHeaderRow.appendChild(elemCell);
+    }
+
+    if (!settings.ap && settings.term != 'summer') {    
+      elemCell = document.createElement('th');
+      startDate = _formatPacingWeekDate(pacingCalendar.start3.startdate);
+      endDate = _formatPacingWeekDate(pacingCalendar.start3.enddate);
+      elemCell.innerHTML = 'Start: ' + startDate + '<br>';
+      elemCell.innerHTML += 'End: ' + endDate;
+      elemHeaderRow.appendChild(elemCell);
+    }
 
     return elemHeaderRow;
   }
