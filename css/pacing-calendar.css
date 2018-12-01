@@ -14,7 +14,7 @@ body {
 	color: var(--pcal-color1);
 	background-color: var(--pcal-color2);
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-size: 11px;
+	font-size: 13px;
 	margin-left: 12px;
 	margin-right: 12px;
 }
@@ -25,14 +25,15 @@ body {
 }
 
 .pcal-contents {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  width: 60%;
 }
 
 table, th, td {
   border: 1px solid black;
   border-collapse: collapse;
+}
+
+th, td {
+  text-align: center;
+  padding-left: 10px;
+  padding-right: 10px;
 }

@@ -49,11 +49,6 @@ const app = function () {
       _getPacingCalendarInfo(settings.term, settings.ap, _setNotice, _processPacingInfo);
 		}
   }
-	
-  function _processPacingInfo(jsonData) {
-    pacingCalendar = jsonData;
-    _renderPacingCalendar();
-  }
   
 	//-------------------------------------------------------------------------------------
 	// query params:
@@ -81,31 +76,77 @@ const app = function () {
 		return result;
 	}
 	
-	//-----------------------------------------------------------------------------
-	// page rendering
-	//-----------------------------------------------------------------------------
-  function _renderPacingCalendar() {  
-    for (var i = 1; i <= 3; i++) {
-      var elemKey = 'start' + i;
-      page[elemKey].appendChild(_renderPacingCalendarTable(i));
-    }
+	//----------------------------------------------
+  // parse the calendar data into a format
+  // usable by the rendering routines
+  //-----------------------------------------------
+  function _processPacingInfo(jsonData) {
+    pacingCalendar = jsonData;
+    
+    var weekList = _buildWeekList(new Date(pacingCalendar.start1.week1), new Date(pacingCalendar.start3['week' + settings.numweeks]));
+    var mappedWeeks = _mapWeeks(weekList, pacingCalendar);
+    console.log(JSON.stringify(mappedWeeks));
+    
+    _renderPacingCalendar(mappedWeeks);
   }
   
-  function _renderPacingCalendarTable(startnum) {
-    var startKey = 'start' + startnum;
-    var calendarData = pacingCalendar[startKey];
-
-    var elemTable = document.createElement('table');
-    elemTable.appendChild(_renderPacingCalendarHeader(calendarData));
+  function _buildWeekList(startWeek, endWeek) {
+    var objWeek = {};
     
-    for (var i = 0; i < settings.numweeks; i++) {
-      elemTable.appendChild(_renderPacingCalendarRow(calendarData, i + 1));
+    currentWeek = startWeek;
+    while (currentWeek <= endWeek) {
+      objWeek[currentWeek] = null;
+      currentWeek.setDate(currentWeek.getDate() + 7);
+    }
+    
+    return objWeek;
+  }
+  
+  function _mapWeeks(weeklist, calendar) {
+    var mapped = {};
+    for (var key in weeklist) {
+      var matchingWeeks = [];
+      for (var i = 0; i < 3; i++) {
+        var section = calendar['start' + (i + 1)];
+        matchingWeeks.push(weekMatchingData(key, section));
+      }
+      mapped[key] = matchingWeeks;
+    }
+    
+    return mapped;
+  }
+  
+  function weekMatchingData(week, calendarSection) {
+    var weeknum = '';
+    
+    for (var i = 0; i < settings.numweeks && weeknum == ''; i++) {
+      if (new Date(calendarSection['week' + (i + 1)]) == week) {
+        weeknum = i + 1;
+      }
+    }
+    
+    return weeknum;
+  }
+  
+  //-----------------------------------------------------------------------------
+	// page rendering
+	//-----------------------------------------------------------------------------
+  function _renderPacingCalendar(mappedWeeks) {  
+    page.contents.appendChild(_renderPacingCalendarTable(mappedWeeks));
+  }
+  
+  function _renderPacingCalendarTable(mappedWeeks) {
+    var elemTable = document.createElement('table');
+    elemTable.appendChild(_renderPacingCalendarHeader());
+    
+    for (var key in mappedWeeks) {
+      elemTable.appendChild(_renderPacingCalendarRow(key, mappedWeeks[key]));
     }
     
     return elemTable;
   }
 	
-  function _renderPacingCalendarHeader(calendarData) {
+  function _renderPacingCalendarHeader() {
     var elemHeaderRow = document.createElement('tr');
     
     var elemCell = document.createElement('th');
@@ -113,8 +154,22 @@ const app = function () {
     elemHeaderRow.appendChild(elemCell);
      
     elemCell = document.createElement('th');
-    var startDate = _formatPacingWeekDate(calendarData.startdate);
-    var endDate = _formatPacingWeekDate(calendarData.enddate);
+    var startDate = _formatPacingWeekDate(pacingCalendar.start1.startdate);
+    var endDate = _formatPacingWeekDate(pacingCalendar.start1.enddate);
+    elemCell.innerHTML = 'Start: ' + startDate + '<br>';
+    elemCell.innerHTML += 'End: ' + endDate;
+    elemHeaderRow.appendChild(elemCell);
+     
+    elemCell = document.createElement('th');
+    startDate = _formatPacingWeekDate(pacingCalendar.start2.startdate);
+    endDate = _formatPacingWeekDate(pacingCalendar.start2.enddate);
+    elemCell.innerHTML = 'Start: ' + startDate + '<br>';
+    elemCell.innerHTML += 'End: ' + endDate;
+    elemHeaderRow.appendChild(elemCell);
+     
+    elemCell = document.createElement('th');
+    startDate = _formatPacingWeekDate(pacingCalendar.start3.startdate);
+    endDate = _formatPacingWeekDate(pacingCalendar.start3.enddate);
     elemCell.innerHTML = 'Start: ' + startDate + '<br>';
     elemCell.innerHTML += 'End: ' + endDate;
     elemHeaderRow.appendChild(elemCell);
@@ -122,19 +177,24 @@ const app = function () {
     return elemHeaderRow;
   }
   
-  function _renderPacingCalendarRow(calendarData, weekNum) {
+  function _renderPacingCalendarRow(week, weekData) {
     var elemRow = document.createElement('tr');
-    
+ 
     var elemCell = document.createElement('td');
-    var weekKey = 'week' + weekNum;
-    var weekLabel = 'Week ' + weekNum;
-    elemCell.innerHTML = _formatPacingWeekDate(calendarData[weekKey]);
+    elemCell.innerHTML = _formatPacingWeekDate(week);
     elemRow.appendChild(elemCell);
     
-    elemCell = document.createElement('td');
-    elemCell.innerHTML = weekLabel;
-    elemRow.appendChild(elemCell);
-    
+    for (var i = 0; i < weekData.length; i++) {
+      elemCell = document.createElement('td');
+      var weeknum = weekData[i];
+      if (weeknum == '') {
+        elemCell.innerHTML = '-';
+      } else {
+        elemCell.innerHTML = 'Week ' + weeknum;
+      }
+      elemRow.appendChild(elemCell);
+    }
+            
     return elemRow;
   }
   
@@ -163,10 +223,10 @@ const app = function () {
     
     if (pacingdate != null & pacingdate != '') {
       objDate = new Date(pacingdate);
-      var day = objDate.getDate();
-      var month = objDate.getMonth() + 1;
-      var year = objDate.getFullYear() + '';
-      formattedDate = month + "/" + day + "/" + year.slice(-2);
+      var day = ("00" + objDate.getDate()).slice(-2);
+      var month = ("00" + (objDate.getMonth() + 1)).slice(-2);
+      var year = (objDate.getFullYear() + '').slice(-2);
+      formattedDate = month + "/" + day + "/" + year;
     }
     
     return formattedDate;
