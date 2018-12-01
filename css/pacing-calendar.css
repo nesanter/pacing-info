@@ -1,0 +1,38 @@
+.pcal-colorscheme {
+	--pcal-color1: #000000;
+	--pcal-color2: #ffffff;
+  --pcal-color3: #dddddd;
+  --pcal-color4: #1503ff;
+  --pcal-color5: #ff0000;
+  --pcal-MV-darkteal: #115e6e;
+  --pcal-color-start1: red;
+  --pcal-color-start2: blue;
+  --pcal-color-start3: #16c405;
+}
+
+body {
+	color: var(--pcal-color1);
+	background-color: var(--pcal-color2);
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 11px;
+	margin-left: 12px;
+	margin-right: 12px;
+}
+
+.pcal-notice {
+	color: blue;
+	font-style: italic;
+}
+
+.pcal-contents {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 60%;
+}
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
