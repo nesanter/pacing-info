@@ -161,7 +161,7 @@ const app = function () {
       "trimester1": "trimester 1",
       "trimester2": "trimester 2",
       "trimester3": "trimester 3",
-      "summar": "summer"
+      "summer": "summer"
     }
     var elemTitle = document.createElement('div');
     
