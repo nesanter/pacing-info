@@ -197,13 +197,13 @@ const app = function () {
     elemCalendarWeeks = document.createElement('div');
     var weekKey = 'week' + settings.weeknum;
     var html = '';
-    if (!settings.ap) {
+    if (!apCourse) {
       html += '<span class="pidx-nav-start1">Start 1: ' + _formatPacingDate(calendar.start1[weekKey]) + '</span>  &nbsp;&nbsp;';
     }
     if (settings.term != 'summer') {
       html += '<span class="pidx-nav-start2">Start 2: ' + _formatPacingDate(calendar.start2[weekKey]) + '</span>  &nbsp;&nbsp;';
     }
-    if (!(settings.ap || settings.term == 'summer')) {
+    if (!(apCourse || settings.term == 'summer')) {
       html += '<span class="pidx-nav-start3">Start 3: ' + _formatPacingDate(calendar.start3[weekKey]) + '</span>';
     }
     elemCalendarWeeks.innerHTML = html;
