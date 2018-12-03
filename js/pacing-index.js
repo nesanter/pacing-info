@@ -1,6 +1,6 @@
 //
-// TODO: make pacing info toggle-able (?)
 // TODO: make configuration tool to generate BB embeddable code for this "package"
+// TODO: ?? add pop-up or similar for full pacing calendar
 //
 const app = function () {
 	const page = {
@@ -180,6 +180,7 @@ const app = function () {
   
   function _renderPacingDetails() {
     var apCourse = fullPacingInfo.pacinginfo.apcourse;
+    var calendar = fullPacingInfo.pacingcalendar;
     var idTitle = 'pacingDetailsTitle';
     var idList = 'pacingDetailsList';
     var elemTitle = document.getElementById(idTitle);
@@ -192,6 +193,23 @@ const app = function () {
     elemTitle.id = idTitle;
     elemTitle.innerHTML = 'Pacing for week #' + settings.weeknum;
     elemTitle.classList.add('pidx-pacingheader');
+    
+    elemCalendarWeeks = document.createElement('div');
+    var weekKey = 'week' + settings.weeknum;
+    var html = '';
+    if (!settings.ap) {
+      html += '<span class="pidx-nav-start1">Start 1: ' + _formatPacingDate(calendar.start1[weekKey]) + '</span>  &nbsp;&nbsp;';
+    }
+    if (settings.term != 'summer') {
+      html += '<span class="pidx-nav-start2">Start 2: ' + _formatPacingDate(calendar.start2[weekKey]) + '</span>  &nbsp;&nbsp;';
+    }
+    if (!(settings.ap || settings.term == 'summer')) {
+      html += '<span class="pidx-nav-start3">Start 3: ' + _formatPacingDate(calendar.start3[weekKey]) + '</span>';
+    }
+    elemCalendarWeeks.innerHTML = html;
+    elemCalendarWeeks.classList.add('pidx-pacingcalendarweeks');
+    
+    elemTitle.appendChild(elemCalendarWeeks);
     page.pacing.appendChild(elemTitle);
     
     var unit = '**dummy**';
