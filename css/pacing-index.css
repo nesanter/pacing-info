@@ -5,6 +5,7 @@
   --pidx-color4: #1503ff;
   --pidx-color5: #ff0000;
   --pidx-MV-darkteal: #115e6e;
+  --pidx-MV-lightteal: #2f8d98;
   --pidx-color-start1: red;
   --pidx-color-start2: blue;
   --pidx-color-start3: #16c405;
@@ -72,8 +73,9 @@ body {
 }
 
 .pidx-pacingcontainer {
+  background: linear-gradient(rgba(221,221,221, 1.0), rgba(221,221,221, 0.0));
   padding-right: 10px;
-  background-color: var(--pidx-color3);
+  /*background-color: var(--pidx-color3);*/
   border: 1px solid var(--pidx-color1);
   border-radius: 10px;
 }
