@@ -1,5 +1,6 @@
 //
 // TODO: make configuration tool to generate BB embeddable code for this "package"
+// TODO: clean up and refactor
 //
 const app = function () {
 	const page = {
@@ -278,8 +279,8 @@ const app = function () {
     if (!apCourse) {
       elemListItem.innerHTML += ' if the dates of your term are ' +  
                                _formatPacingDate(start2Info.startDate) + ' - ' + _formatPacingDate(start2Info.endDate)
-      elemList.appendChild(elemListItem);
     }
+    elemList.appendChild(elemListItem);
     
     if (!apCourse) {
       elemListItem = document.createElement('li');
