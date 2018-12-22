@@ -1,113 +1,75 @@
 .pidx-colorscheme {
 	--pidx-color1: #000000;
-	--pidx-color2: #ffffff;
-  --pidx-color3: #dddddd;
-  --pidx-color4: #1503ff;
-  --pidx-color5: #ff0000;
-  --pidx-MV-darkteal: #115e6e;
-  --pidx-MV-lightteal: #2f8d98;
-  --pidx-color-start1: red;
-  --pidx-color-start2: blue;
-  --pidx-color-start3: #16c405;
+  --pidx-color2: #ffffff;
+  --pidx-color-notice: blue;
+  --pidx-color-MV-darkteal: #135e6f;
+  --pidx-color-MV-lightteal: #2f8d98;
+  --pidx-color-MV-green: #2f8d98;
+  --pidx-color-MV-orange: #f7941e;
+  --pidx-color-MV-darkgray: #414042;
+  --pidx-color-MV-lightgray: #6d6e71;
+  --pidx-color-duedate: blue;
+  --pidx-color-progresscheck: blue;
 }
 
 body {
 	color: var(--pidx-color1);
 	background-color: var(--pidx-color2);
-	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-size: 11px;
-	margin-left: 12px;
-	margin-right: 12px;
+  font-family: Gotham, Montserrat, "Noto Sans", Helvetica, Calibri, Arial, "Noto Serif", Garamond, "Times New Roman";
+	font-size: 12px;
 }
 
 .pidx-notice {
-	color: blue;
+	color: var(--pidx-color-notice);
 	font-style: italic;
 }
 
+.pidx-body {
+  border: 1px solid var(--pidx-color1);
+  background-color: var(--pidx-color1);
+  background-image: linear-gradient(315deg, #000000 0%, #7f8c8d 74%); 
+}
+
+.pidx-container {
+  padding-top: 6px;
+}
+
 .pidx-contents {
-  display: flex;
-  flex-direction: row;
 }
 
-.pidx-navigation-container {
-  display: inline-block;
-  text-align: center;
+.pidx-contents iframe {
+  border: none;
 }
 
-.pidx-navigationkey-container {
-  background-color: var(--pidx-color3);
-  margin-bottom: 3px;
-  padding-left: 5px;
-  padding-bottom: 0px;
-  padding-top: 2px;
+.pidx-pacing-title {
+  background-color: var(--pidx-color-MV-lightteal);
+  color: var(--pidx-color2);
+  padding-left: 8px;
+}
+
+.pidx-pacing-info {
   border: 1px solid var(--pidx-color1);
-  border-radius: 8px;
-}
-
-.pidx-navbutton {
-  width: 58px;
-  font-size: 11px;
-  border: 1px solid var(--pidx-color1);
-  border-radius: 8px;
-}
-
-.pidx-navbuttonselected {
+  padding-left: 8px;
   background-color: var(--pidx-color2);
-  font-weight: bold;
-}
-
-.pidx-nav-start1 {
-  color: var(--pidx-color-start1);
-  border-color: var(--pidx-color-start1);
-}
-
-.pidx-nav-start2 {
-  color: var(--pidx-color-start2);
-  border-color: var(--pidx-color-start2);
-}
-
-.pidx-nav-start3 {
-  color: var(--pidx-color-start3);
-  border-color: var(--pidx-color-start3);
-}
-
-.pidx-pacingcontainer {
-  background: linear-gradient(rgba(221,221,221, 1.0), rgba(221,221,221, 0.0));
-  padding-right: 10px;
-  /*background-color: var(--pidx-color3);*/
-  border: 1px solid var(--pidx-color1);
-  border-radius: 10px;
-}
-
-.pidx-pacingheader {
-  font-size: 13px;
-  font-weight: bold;
-  margin-left: 6px;
-}
-
-.pidx-pacingcalendarweeks {
-  font-size: 11px;
-  font-weight: normal;
 }
 
 .pidx-pacingitemtitle {
-  margin-left: 6px;
+  margin-left: 0px;
 }
 
 .pidx-pacingitem {
   display: list-item;
   list-style-type: disc;
-  margin-left: 26px;
+  margin-left: 16px;
 } 
 
 .pidx-progress-check {
   font-style: italic;
-  color: var(--pidx-color4);
+  color: var(--pidx-color-progresscheck);
 }
 
 .pidx-duedate {
-  color: var(--pidx-color4);
+  color: var(--pidx-color-duedate);
   font-style: italic;
   font-weight: bold;
 }

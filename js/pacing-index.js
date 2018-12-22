@@ -1,6 +1,7 @@
 //
 // TODO: make configuration tool to generate BB embeddable code for this "package"
-// TODO: ?? add pop-up or similar for full pacing calendar
+// TODO: add pop-up or similar for full pacing calendar
+// TODO: create "home" page
 //
 const app = function () {
 	const page = {
@@ -8,9 +9,9 @@ const app = function () {
     notice: null,
     contents: null,
     navigation: null,
-    navigationkey: null,
     announcements: null,
-    pacing: null
+    tasksforweek: null,
+    navbarlist: null
 	};
 	
 	const settings = {
@@ -43,9 +44,9 @@ const app = function () {
     page.notice = document.getElementById('notice');
 		page.contents = document.getElementById('contents');
     page.navigation = document.getElementById('navigation');
-    page.navigationkey = document.getElementById('navigationkey');
-    page.announcements = document.getElementById('announcements');
-    page.pacing = document.getElementById('pacing');						
+    page.announcements = document.getElementById('announcements');	
+    page.tasksforweek = document.getElementById('tasksforweek');    
+    page.navbarlist = document.getElementById('navbarlist');
 		
 		_setNotice('initializing...');
 
@@ -94,9 +95,6 @@ const app = function () {
 			result = true;
 		}
 
-    // ?? parameterize these
-    settings.weeknum = 1;  // announcement week displayed on load
-
 		return result;
 	}
 	
@@ -106,7 +104,6 @@ const app = function () {
   function _renderPacingIndex() {
     _calculateCurrentWeeks();
     _renderNavigation();
-    _renderNavigationKey();
     _setWeek(1);
   }
   
@@ -116,54 +113,99 @@ const app = function () {
     var start2Info = settings.calendarSummary.start2;
     var start3Info = settings.calendarSummary.start3;
     
-    for (var i = 1; i <= settings.numweeks; i++) {
-      var elemNavButton = _makeButton(
-        _navButtonId(i),
-        'pidx-navbutton', 
-        'week ' + i, 
-        '', 
-        makeSetWeekFunction(i));
-      
-      if (i == start1Info.currentWeekNum && !apCourse) {
-        elemNavButton.classList.add('pidx-nav-start1')
-        elemNavButton.title = 'start ' + _formatPacingDate(start1Info.startDate) + ', end ' + _formatPacingDate(start1Info.endDate);
-      }
-      if (i == start2Info.currentWeekNum) {
-        elemNavButton.classList.add('pidx-nav-start2')
-        if (!apCourse) elemNavButton.title = 'start ' + _formatPacingDate(start2Info.startDate) + ', end ' + _formatPacingDate(start2Info.endDate);
-      }
-      if (i == start3Info.currentWeekNum && !apCourse) {
-        elemNavButton.classList.add('pidx-nav-start3')
-        elemNavButton.title = 'start ' + _formatPacingDate(start3Info.startDate) + ', end ' + _formatPacingDate(start3Info.endDate);
-      }
-      
-      page.navigation.appendChild(elemNavButton);
-      if (i == 10) page.navigation.appendChild(document.createElement('br'));
-    }  
-  }
-  
-  function _navButtonId(weeknum) {
-    return 'btnWeek' + weeknum;
-  }
-  
-  function _renderNavigationKey() {
-    if (fullPacingInfo.pacinginfo.apcourse) {
-      page.navigationkey.style.display = 'none';
-      return;
+    //-- make navbar item for "home" page
+    page.navbarlist.appendChild(_makeNavbarItem('home00', '', 'overview of this week-by-week pacing tool', 'home <span class="sr-only">(current)</span>'));
+    
+    //-- make navbar item for current week corresponding to each start
+    var title = '';
+    if (!apCourse) {
+      title = 'start1: ' + _formatPacingDate(start1Info.startDate) + '-' + _formatPacingDate(start1Info.endDate);
+      page.navbarlist.appendChild(_makeNavbarItem(_navItemId(start1Info.currentWeekNum), '', title, 'week ' + start1Info.currentWeekNum));
+    }
+    if (apCourse) {
+      page.navbarlist.appendChild(_makeNavbarItem(_navItemId(start2Info.currentWeekNum), '', 'current week', 'week ' + start2Info.currentWeekNum));
+    } else {
+      title = 'start2: ' + _formatPacingDate(start2Info.startDate) + '-' + _formatPacingDate(start2Info.endDate);
+      page.navbarlist.appendChild(_makeNavbarItem(_navItemId(start2Info.currentWeekNum), '', title, 'week ' + start2Info.currentWeekNum));
+    }
+    if (!apCourse) {
+      title = 'start3: ' + _formatPacingDate(start3Info.startDate) + '-' + _formatPacingDate(start3Info.endDate);
+      page.navbarlist.appendChild(_makeNavbarItem(_navItemId(start3Info.currentWeekNum), '', title, 'week ' + start3Info.currentWeekNum));
     }
     
-    page.navigationkey.innerHTML = 'Pacing key: ';
-    var startInfo = [start1Info = settings.calendarSummary.start1, settings.calendarSummary.start2, settings.calendarSummary.start3];
-    var keyClass = ['pidx-nav-start1', 'pidx-nav-start2', 'pidx-nav-start3'];
+    //-- make navbar drop down item for all weeks  
+     page.navbarlist.appendChild(_makeNavbarDropdown());
+     
+    //-- add event handlers
+    $(".nav-link").each( function() {
+      if (this.id != 'navbarDropdown') {
+        this.addEventListener('click', _makeNavlinkHandler(this)); 
+      }
+    });
+
+    $(".dropdown-item").each( function() {
+      this.addEventListener('click', _makeNavlinkHandler(this)); 
+    });
+  }
+  
+  function _makeNavbarItem(id, classtext, title, innerHTML) {
+    var elemListItem = document.createElement('li');
+    elemListItem.classList.add('navitem');
     
-    for (var i = 0; i < 3; i++) {
-      var elemKey = document.createElement('span');
-      elemKey.innerHTML = 'start ' + _formatPacingDate(startInfo[i].startDate) + ', end ' + _formatPacingDate(startInfo[i].endDate);
-      elemKey.style.paddingRight = '10px';
-      //if (i < 2) elemKey.innerHTML += '<br>';
-      elemKey.classList.add(keyClass[i]);
-      page.navigationkey.appendChild(elemKey);
-    }
+    var elemAnchor = document.createElement('a');
+    elemAnchor.classList.add('nav-link');
+    if (classtext != '') elemAnchor.classList.add(classtext);
+    elemAnchor.id = id;
+    elemAnchor.title = title;
+    elemAnchor.innerHTML = innerHTML;
+    elemAnchor.href = '#';
+    elemListItem.appendChild(elemAnchor);
+    
+    return elemListItem;
+  }
+  
+  function _makeNavbarDropdown() {
+     var elemDropdown = document.createElement('li');
+     elemDropdown.classList.add('nav-item');
+     elemDropdown.classList.add('dropdown');
+     
+     var elemAnchor = document.createElement('a');
+     elemAnchor.id = 'navbarDropdown'
+     elemAnchor.classList.add('nav-link');
+     elemAnchor.classList.add('dropdown-toggle');
+     elemAnchor.title = 'all weeks';
+     elemAnchor.href = '#';
+     elemAnchor.setAttribute('role', 'button');
+     elemAnchor.setAttribute('data-toggle', 'dropdown');
+     elemAnchor.setAttribute('aria-haspopup', 'true');
+     elemAnchor.setAttribute('aria-expanded', 'false');
+     
+     var elemDiv = document.createElement('div');
+     elemDiv.classList.add('dropdown-menu');
+     elemDiv.setAttribute('aria-labelledby', 'navbarDropdown');
+     for (var i = 0; i < settings.numweeks; i++) {
+       elemDiv.appendChild(_makeNavbarDropdownItem(_navItemId(i+1), '', 'week ' + (i+1) ));
+     }
+     
+     elemDropdown.appendChild(elemAnchor);
+     elemDropdown.appendChild(elemDiv);
+
+     return elemDropdown;
+  }
+  
+  function _makeNavbarDropdownItem(id, classtext, innerHTML) {
+    var elemAnchor = document.createElement('a')
+    elemAnchor.id = id;
+    elemAnchor.classList.add('dropdown-item');
+    if (classtext != '') elemAnchor.classList.add(classtext);
+    elemAnchor.innerHTML = innerHTML;
+    elemAnchor.href = '#';
+    
+    return elemAnchor;
+  }
+  
+  function _navItemId(weeknum) {
+    return 'navweek' + ('00' + weeknum).slice(-2);
   }
 
   function _renderAnnouncements() {
@@ -181,36 +223,18 @@ const app = function () {
   function _renderPacingDetails() {
     var apCourse = fullPacingInfo.pacinginfo.apcourse;
     var calendar = fullPacingInfo.pacingcalendar;
-    var idTitle = 'pacingDetailsTitle';
-    var idList = 'pacingDetailsList';
+    var idTitle = 'tasksforweekTitle';
+    var idList = 'tasksforweekDetails';
     var elemTitle = document.getElementById(idTitle);
     var elemList = document.getElementById(idList);
     if (elemTitle != null) elemTitle.parentNode.removeChild(elemTitle);
     if (elemList != null) elemList.parentNode.removeChild(elemList);
     
     var pacingWeek = fullPacingInfo.pacinginfo.pacing[settings.weeknum];
-    elemTitle = document.createElement('p');
+    elemTitle = document.createElement('div');
     elemTitle.id = idTitle;
-    elemTitle.innerHTML = 'Pacing for week #' + settings.weeknum;
-    elemTitle.classList.add('pidx-pacingheader');
-    
-    elemCalendarWeeks = document.createElement('div');
-    var weekKey = 'week' + settings.weeknum;
-    var html = '';
-    if (!apCourse) {
-      html += '<span class="pidx-nav-start1">Start 1: ' + _formatPacingDate(calendar.start1[weekKey]) + '</span>  &nbsp;&nbsp;';
-    }
-    if (settings.term != 'summer') {
-      html += '<span class="pidx-nav-start2">Start 2: ' + _formatPacingDate(calendar.start2[weekKey]) + '</span>  &nbsp;&nbsp;';
-    }
-    if (!(apCourse || settings.term == 'summer')) {
-      html += '<span class="pidx-nav-start3">Start 3: ' + _formatPacingDate(calendar.start3[weekKey]) + '</span>';
-    }
-    elemCalendarWeeks.innerHTML = html;
-    elemCalendarWeeks.classList.add('pidx-pacingcalendarweeks');
-    
-    elemTitle.appendChild(elemCalendarWeeks);
-    page.pacing.appendChild(elemTitle);
+
+    elemTitle.innerHTML = 'Tasks for week #' + settings.weeknum;
     
     var unit = '**dummy**';
     elemList = document.createElement('dl');
@@ -243,8 +267,11 @@ const app = function () {
       if (pacingWeek[i].progresscheck) elemDefItem.classList.add('pidx-progress-check');
       elemList.appendChild(elemDefItem);
     }
-    
-    page.pacing.appendChild(elemList);
+
+    elemTitle.classList.add('pidx-pacing-title');
+    elemList.classList.add('pidx-pacing-info');
+    page.tasksforweek.appendChild(elemTitle);
+    page.tasksforweek.appendChild(elemList);
   }
     
   //-------------------------------------------------------------------------
@@ -285,28 +312,22 @@ const app = function () {
   //--------------------------------------------------------------------------
   // handlers
 	//--------------------------------------------------------------------------
-  function makeSetWeekFunction(weeknum) {
+  function _makeNavlinkHandler(e) {
     return function() {
-      _setWeek(weeknum); 
+      _navlinkHandler(parseInt(e.id.slice(-2)));
+    };
+  }
+  
+  function _navlinkHandler(weeknum) {
+    if (weeknum == 0) {
+      console.log('handle home page');
+    } else {
+      _setWeek(weeknum);
     }
   }
   
 	function _setWeek(weeknum) {
-    var selectedClass = 'pidx-navbuttonselected';
-    
     settings.weeknum = weeknum;
-
-    for (var i = 1; i <= settings.numweeks; i++) {
-      var id = _navButtonId(i);
-      var btn = document.getElementById(id);
-
-      if (btn.classList.contains(selectedClass)) {
-        btn.classList.remove(selectedClass);
-      }
-      if (i == settings.weeknum) {
-        btn.classList.add(selectedClass);
-      }
-    }
     
     _renderAnnouncements();
     _renderPacingDetails();
@@ -327,16 +348,6 @@ const app = function () {
 			page.notice.style.visibility = 'visible';
 		}
 	}
-		
-	function _makeButton(id, className, label, tooltip, listener) {
-		var btn = document.createElement('button');
-		btn.id = id;
-		btn.classList.add(className);
-		btn.innerHTML = label;
-		btn.title = tooltip;
-		btn.addEventListener('click', listener, false);
-		return btn;
-	}	
   
   function _formatDueDate(duedate) {
     var formattedDate = '';
