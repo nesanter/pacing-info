@@ -41,6 +41,28 @@ body {
   border: none;
 }
 
+.pidx-homepage {
+  background-color: var(--pidx-color2);
+  margin-bottom: 6px;
+}
+
+.pidx-homepage #homepageTitle {
+  color: var(--pidx-color2);
+  background-color: var(--pidx-color-MV-lightteal);
+  padding-left: 4px;
+}
+
+.pidx-homepage #homepageContents {
+  color: var(--pidx-color1);
+  background-color: var(--pidx-color2);
+  padding-left: 4px;
+  margin-top: 10px;
+}
+
+.pidx-homepage #homepageContents .pidx-weeknumber {
+  font-weight: bold;
+}
+
 .pidx-pacing-title {
   background-color: var(--pidx-color-MV-lightteal);
   color: var(--pidx-color2);

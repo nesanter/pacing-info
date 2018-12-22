@@ -1,22 +1,15 @@
 .pcal-colorscheme {
 	--pcal-color1: #000000;
 	--pcal-color2: #ffffff;
-  --pcal-color3: #dddddd;
-  --pcal-color4: #1503ff;
-  --pcal-color5: #ff0000;
-  --pcal-MV-darkteal: #115e6e;
-  --pcal-color-start1: red;
-  --pcal-color-start2: blue;
-  --pcal-color-start3: #16c405;
 }
 
 body {
 	color: var(--pcal-color1);
 	background-color: var(--pcal-color2);
-	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-size: 13px;
-	margin-left: 12px;
-	margin-right: 12px;
+	font-family: Gotham, Montserrat, "Noto Sans", Helvetica, Calibri, Arial, "Noto Serif", Garamond, "Times New Roman";
+	font-size: 11px;
+	margin-left: 2px;
+	margin-right: 2px;
 }
 
 .pcal-notice {
@@ -25,6 +18,11 @@ body {
 }
 
 .pcal-contents {
+  display: inline-block;
+}
+
+h3 {
+  font-size: 12px;
 }
 
 table, th, td {
@@ -34,6 +32,6 @@ table, th, td {
 
 th, td {
   text-align: center;
-  padding-left: 10px;
-  padding-right: 10px;
+  padding-left: 6px;
+  padding-right: 6px;
 }

@@ -11,7 +11,8 @@ const app = function () {
     navigation: null,
     announcements: null,
     tasksforweek: null,
-    navbarlist: null
+    navbarlist: null,
+    calendar: null
 	};
 	
 	const settings = {
@@ -47,6 +48,7 @@ const app = function () {
     page.announcements = document.getElementById('announcements');	
     page.tasksforweek = document.getElementById('tasksforweek');    
     page.navbarlist = document.getElementById('navbarlist');
+    page.calendar = document.getElementById('calendar');
 		
 		_setNotice('initializing...');
 
@@ -89,6 +91,7 @@ const app = function () {
     settings.instance = params.instance;
     settings.announcementsWidth = params.awidth;
     settings.announcementsHeight = params.aheight;
+    
     //settings.urlAnnouncementsBase = 'https://docs.google.com/presentation/d/e/2PACX-1vTLXCiT2X9QX71zuMly2wDhIt4aSIOS9KpXTOStvL6nw0o4V726dAyX0rPYPKlM-uO4ifln5PAoZ0dO/embed?rm=minimal&start=false&amp;loop=false&amp;delayms=3000;rm=minimal';
     
     if (params.coursekey != null && params.term != null && params.announce != null) {
@@ -104,7 +107,8 @@ const app = function () {
   function _renderPacingIndex() {
     _calculateCurrentWeeks();
     _renderNavigation();
-    _setWeek(1);
+    _loadPacingCalendar();
+    _setWeek(0);
   }
   
   function _renderNavigation() {
@@ -208,7 +212,7 @@ const app = function () {
     return 'navweek' + ('00' + weeknum).slice(-2);
   }
 
-  function _renderAnnouncements() {
+  function _renderAnnouncements() {  
     page.announcements.width = settings.announcementsWidth;
     page.announcements.height = settings.announcementsHeight;
     page.announcements.frameborder = 0;
@@ -218,17 +222,93 @@ const app = function () {
     
     var newSrc = settings.urlAnnouncementsBase + '#' + settings.weeknum;
     page.announcements.src = newSrc;
+    
+    $("#homepage").hide();
+    $("#announcements").show();
+  }
+  
+  function _renderHomePage() {
+    var elemHomePage = document.getElementById('homepage');
+    elemHomePage.style.width = settings.announcementsWidth + 'px';
+    elemHomePage.style.height = settings.announcementsHeight + 'px';
+
+    var idTitle = 'homepageTitle';
+    var idContents = 'homepageContents';
+    var elemTitle = document.getElementById(idTitle);
+    var elemContents = document.getElementById(idContents);
+    if (elemTitle != null) elemTitle.parentNode.removeChild(elemTitle);
+    if (elemContents != null) elemContents.parentNode.removeChild(elemContents);
+    
+    elemTitle = document.createElement('div');
+    elemTitle.id = idTitle;
+    elemContents = document.createElement('div', {id: idContents});
+    elemContents.id = idContents;
+   
+    elemTitle.innerHTML = fullPacingInfo.pacinginfo.coursename;
+    
+    var elemContents1 = document.createElement('div');    
+    elemContents1.innerHTML = 'This tool provides week-by-week pacing information for the course<br><br>' + 'According to the pacing guide you should be on';
+    
+    elemContents.appendChild(elemContents1);
+    elemContents.appendChild(_makeHomePageWeekList());
+    
+    elemHomePage.appendChild(elemTitle);
+    elemHomePage.appendChild(elemContents);
+    
+    $("#homepage").show();
+    $("#announcements").hide();
+  }
+  
+  function _makeHomePageWeekList() {
+    var apCourse = fullPacingInfo.pacinginfo.apcourse;
+    var start1Info = settings.calendarSummary.start1;
+    var start2Info = settings.calendarSummary.start2;
+    var start3Info = settings.calendarSummary.start3;
+    
+    var elemList = document.createElement('ul');
+    var elemListItem;
+
+    if (!apCourse) {
+      elemListItem = document.createElement('li');
+      elemListItem.innerHTML = _formatHomePageWeek(start1Info.currentWeekNum) + ' if the dates of your term are ' +  
+                               _formatPacingDate(start1Info.startDate) + ' - ' + _formatPacingDate(start1Info.endDate)
+      elemList.appendChild(elemListItem);
+    }
+    
+    elemListItem = document.createElement('li');
+    elemListItem.innerHTML = _formatHomePageWeek(start2Info.currentWeekNum);
+    if (!apCourse) {
+      elemListItem.innerHTML += ' if the dates of your term are ' +  
+                               _formatPacingDate(start2Info.startDate) + ' - ' + _formatPacingDate(start2Info.endDate)
+      elemList.appendChild(elemListItem);
+    }
+    
+    if (!apCourse) {
+      elemListItem = document.createElement('li');
+      elemListItem.innerHTML = _formatHomePageWeek(start3Info.currentWeekNum) + ' if the dates of your term are ' +  
+                               _formatPacingDate(start3Info.startDate) + ' - ' + _formatPacingDate(start3Info.endDate)
+      elemList.appendChild(elemListItem);
+    }    
+    
+    return elemList;
+  }
+  
+  function _formatHomePageWeek(weeknum) {
+    var html = '';
+    html += '<span class="pidx-weeknumber">week ' + weeknum + '</span>';
+    return html;
   }
   
   function _renderPacingDetails() {
-    var apCourse = fullPacingInfo.pacinginfo.apcourse;
-    var calendar = fullPacingInfo.pacingcalendar;
     var idTitle = 'tasksforweekTitle';
     var idList = 'tasksforweekDetails';
     var elemTitle = document.getElementById(idTitle);
     var elemList = document.getElementById(idList);
     if (elemTitle != null) elemTitle.parentNode.removeChild(elemTitle);
     if (elemList != null) elemList.parentNode.removeChild(elemList);
+    
+    var apCourse = fullPacingInfo.pacinginfo.apcourse;
+    var calendar = fullPacingInfo.pacingcalendar;
     
     var pacingWeek = fullPacingInfo.pacinginfo.pacing[settings.weeknum];
     elemTitle = document.createElement('div');
@@ -272,6 +352,18 @@ const app = function () {
     elemList.classList.add('pidx-pacing-info');
     page.tasksforweek.appendChild(elemTitle);
     page.tasksforweek.appendChild(elemList);
+    
+    $("#tasksforweek").show();
+    $("#calendar").hide();
+  }
+  
+  function _loadPacingCalendar() {
+    page.calendar.src = 'https://ktsanter.github.io/pacing-info/pacing-calendar.html?term=semester1';
+  }
+  
+  function _renderPacingCalendar() {
+    $("#tasksforweek").hide();
+    $("#calendar").show();
   }
     
   //-------------------------------------------------------------------------
@@ -319,18 +411,20 @@ const app = function () {
   }
   
   function _navlinkHandler(weeknum) {
-    if (weeknum == 0) {
-      console.log('handle home page');
-    } else {
-      _setWeek(weeknum);
-    }
+    _setWeek(weeknum);
   }
   
 	function _setWeek(weeknum) {
     settings.weeknum = weeknum;
     
-    _renderAnnouncements();
-    _renderPacingDetails();
+    if (weeknum == 0) {
+      _renderHomePage();
+      _renderPacingCalendar();
+      
+    } else {
+      _renderAnnouncements();
+      _renderPacingDetails();
+    }
     _postHeightChangeMessage();
   }
   
