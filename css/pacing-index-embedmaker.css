@@ -1,0 +1,44 @@
+.pidxem-colorscheme {
+	--pidx-color1: #000000;
+  --pidx-color2: #ffffff;
+  --pidx-color-notice: blue;
+  --pidx-color-MV-darkteal: #135e6f;
+  --pidx-color-MV-lightteal: #2f8d98;
+  --pidx-color-MV-green: #2f8d98;
+  --pidx-color-MV-orange: #f7941e;
+  --pidx-color-MV-darkgray: #414042;
+  --pidx-color-MV-lightgray: #6d6e71;
+}
+
+body {
+	color: var(--pidx-color1);
+	background-color: var(--pidx-color2);
+  font-family: Gotham, Montserrat, "Noto Sans", Helvetica, Calibri, Arial, "Noto Serif", Garamond, "Times New Roman";
+	font-size: 12px;
+}
+
+.pidxem-title {
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.pidxem-item {
+  margin-bottom: 10px;
+}
+
+.pidxem-item select {
+  font-size: 12px;
+}
+
+.pidxem-item input {
+  font-size: 12px;
+}
+
+.pidxem-item button {
+  font-size: 12px;
+}
+
+.pidxem-item .pidxem-notice {
+  color: var(--pidx-color-notice);
+  font-style: italic;
+}

@@ -1,6 +1,7 @@
 //
 // TODO: make configuration tool to generate BB embeddable code for this "package"
 // TODO: clean up and refactor
+// TODO: figure out AP pacing - what start date, what pacing week, etc.
 //
 const app = function () {
 	const page = {
@@ -76,6 +77,7 @@ const app = function () {
 
 		var params = {};
 		var urlParams = new URLSearchParams(window.location.search);
+
 		params.coursekey = urlParams.has('coursekey') ? urlParams.get('coursekey') : null;
     params.term = urlParams.has('term') ? urlParams.get('term') : null;
     params.announce = urlParams.has('announce') ? urlParams.get('announce') : null;

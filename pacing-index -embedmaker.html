@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Pacing Index embed generator</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/pacing-index-embedmaker.css">
+  </head>
+
+  <body class="pidxem-colorscheme">
+
+    <div class="pidxem-title">
+      Pacing index embed code generator
+    </div>
+      
+    <hr>
+
+    <div class="pidxem-container">    
+      <div class="pidxem-item">
+        <span> select course </span>
+        <select id="selCourse"> </select>
+      </div>
+      
+      <div class="pidxem-item">
+        <span> select term </span>
+        <select id="selTerm"> </select>
+      </div>
+      
+      <div class="pidxem-item">
+        <span> link to published Google Slides </span>
+        <input id="txtAnnouncementsLink" type="text">
+      </div>
+      
+      <div class="pidxem-item">
+        <button id="btnCreateEmbed">create embed code</button>
+        <div id="embedNotice" class="pidxem-notice"> </div>
+      </div>
+    </div>
+    
+    <script src="js/pacing-index-embedmaker.js"></script>	
+    <script>
+      document.addEventListener('DOMContentLoaded', app.init);
+    </script>
+  </body>
+</html>
