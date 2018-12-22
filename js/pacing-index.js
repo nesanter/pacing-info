@@ -1,7 +1,5 @@
 //
 // TODO: make configuration tool to generate BB embeddable code for this "package"
-// TODO: add pop-up or similar for full pacing calendar
-// TODO: create "home" page
 //
 const app = function () {
 	const page = {
@@ -358,7 +356,15 @@ const app = function () {
   }
   
   function _loadPacingCalendar() {
-    page.calendar.src = 'https://ktsanter.github.io/pacing-info/pacing-calendar.html?term=semester1';
+    page.calendar.height = settings.announcementsHeight;
+    page.calendar.frameborder = 0;
+    page.calendar.allowfullscreen = true;
+    page.calendar.mozallowfullscreen = true;
+    page.calendar.webkitallowfullscreen = true;
+    var source = 'https://ktsanter.github.io/pacing-info/pacing-calendar.html';
+    source += '?term=' + fullPacingInfo.pacingcalendar.start1.term;
+    if (fullPacingInfo.pacinginfo.apcourse) source += '&ap';
+    page.calendar.src = source;
   }
   
   function _renderPacingCalendar() {

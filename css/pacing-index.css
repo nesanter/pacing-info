@@ -37,8 +37,9 @@ body {
 .pidx-contents {
 }
 
-.pidx-contents iframe {
+iframe {
   border: none;
+  display:none;
 }
 
 .pidx-homepage {
