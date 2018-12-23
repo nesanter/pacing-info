@@ -92,9 +92,7 @@ const app = function () {
     settings.instance = params.instance;
     settings.announcementsWidth = params.awidth;
     settings.announcementsHeight = params.aheight;
-    
-    //settings.urlAnnouncementsBase = 'https://docs.google.com/presentation/d/e/2PACX-1vTLXCiT2X9QX71zuMly2wDhIt4aSIOS9KpXTOStvL6nw0o4V726dAyX0rPYPKlM-uO4ifln5PAoZ0dO/embed?rm=minimal&start=false&amp;loop=false&amp;delayms=3000;rm=minimal';
-    
+       
     if (params.coursekey != null && params.term != null && params.announce != null) {
 			result = true;
 		}
@@ -399,6 +397,11 @@ const app = function () {
           foundWeek = weekData;
           foundWeekNum = week;
         }
+      }
+      
+      if (foundWeek == null) {
+        foundWeek = new Date(origSummary['week1']);
+        foundWeekNum = 1;
       }
       
       summary.startDate = origSummary.startdate;

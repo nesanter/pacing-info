@@ -18,7 +18,10 @@ const app = function () {
   const courses = {
     "javascript": "Advanced Web Design: JavaScript",
     "apcsp1": "AP Computer Science Principles (S1)",
-    "apcsp2": "AP Computer Science Principles (S2)"
+    "apcsp2": "AP Computer Science Principles (S2)",
+    "fpb": "Foundations of Programming B",
+    "html_css": "Basic Web Design: HTML & CSS",
+    "digital_literacy": "Digital Literacy & Programming"
   }
   
   const terms = {
