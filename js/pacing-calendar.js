@@ -1,5 +1,5 @@
 //
-// TODO: add AP handling and summer handling (single start date)
+// TODO: add summer handling (single start date)
 //
 const app = function () {
 	const page = {

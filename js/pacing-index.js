@@ -1,7 +1,5 @@
 //
-// TODO: make configuration tool to generate BB embeddable code for this "package"
 // TODO: clean up and refactor
-// TODO: figure out AP pacing - what start date, what pacing week, etc.
 //
 const app = function () {
 	const page = {
@@ -366,7 +364,6 @@ const app = function () {
     source += '?term=' + fullPacingInfo.pacingcalendar.start1.term;
     if (fullPacingInfo.pacinginfo.apcourse) source += '&ap';
     page.calendar.src = source;
-    console.log(source);
   }
   
   function _renderPacingCalendar() {
