@@ -84,12 +84,12 @@ const app = function () {
     
     var startweek = new Date(pacingCalendar.start1.week1);
     if (settings.ap) {
-      startweek = new Date(pacingCalendar.start2.week1);
+      startweek = new Date(pacingCalendar.startAP.week1);
     }
       
     var endweek = null;
     if (settings.ap) {
-      endweek = new Date(pacingCalendar.start2['week' + settings.numweeks]);
+      endweek = new Date(pacingCalendar.startAP['week' + settings.numweeks]);
     } else if (settings.term == 'summer') {
       endweek = new Date(pacingCalendar.start1['week' + settings.numweeks]);
     } else {
@@ -110,7 +110,7 @@ const app = function () {
       objWeek[currentWeek] = null;
       currentWeek.setDate(currentWeek.getDate() + 7);
     }
-    
+    console.log(JSON.stringify(objWeek));
     return objWeek;
   }
   
@@ -125,6 +125,7 @@ const app = function () {
                           (i == 2 && settings.term == 'summer');
         if (!skipSection) { 
           var section = calendar['start' + (i + 1)];
+          if (settings.ap) section = calendar['startAP'];
           matchingWeeks.push(weekMatchingData(key, section));
         }
       }

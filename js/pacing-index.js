@@ -366,6 +366,7 @@ const app = function () {
     source += '?term=' + fullPacingInfo.pacingcalendar.start1.term;
     if (fullPacingInfo.pacinginfo.apcourse) source += '&ap';
     page.calendar.src = source;
+    console.log(source);
   }
   
   function _renderPacingCalendar() {
