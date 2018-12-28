@@ -464,7 +464,7 @@ const app = function () {
       var month = objDate.getMonth() + 1;
       formattedDate = days[dayofweek] + ' ' + month + "/" + day;
     }
-    
+
     return formattedDate;
   }
   

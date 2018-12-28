@@ -174,15 +174,16 @@ const app = function () {
   function _formatDueDate(duedate) {
     var formattedDate = '';
     
+    
     if (duedate != null && duedate != '') {
       var days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
       objDate = new Date(duedate);
       var dayofweek = objDate.getDay();
-      var day = objDate.getDate() + 1;
+      var day = objDate.getDate();
       var month = objDate.getMonth() + 1;
       formattedDate = days[dayofweek] + ' ' + month + "/" + day;
     }
-    
+
     return formattedDate;
   }
 		
