@@ -21,7 +21,8 @@ const app = function () {
     announcementsWidth: null,
     announcementsHeight: null,
     calendarSummary: null,
-    instance: null
+    instance: null,
+    currentDate: null
 	};
 	
   const termToWeeks = {
@@ -69,6 +70,7 @@ const app = function () {
   //  coursekey: short course name, e.g. fpa, javascript
   //  term: semester1, semester2, trimester1, trimester2, trimester3, summer
   //  instance: optional integer indicating which of multiple instances on the page this is
+  //  date: override for current date (just for testing)
 	//-------------------------------------------------------------------------------------
 	function _initializeSettings() {
 		var result = false;
@@ -82,6 +84,7 @@ const app = function () {
     params.instance = urlParams.has('instance') ? urlParams.get('instance') : 1;   // optional - if not provided then assumed 1
     params.awidth = urlParams.has('awidth') ? urlParams.get('awidth') : 600;  // optional - if not provided then the default
     params.aheight = urlParams.has('aheight') ? urlParams.get('aheight') : 450;  // optional - if not provided then the default
+    params.date = urlParams.has('date')? new Date(urlParams.get('date')) : new Date();
 
 		settings.coursekey = params.coursekey;
     settings.term = params.term;
@@ -90,6 +93,7 @@ const app = function () {
     settings.instance = params.instance;
     settings.announcementsWidth = params.awidth;
     settings.announcementsHeight = params.aheight;
+    settings.currentDate = params.date;
        
     if (params.coursekey != null && params.term != null && params.announce != null) {
 			result = true;
@@ -113,6 +117,7 @@ const app = function () {
     var start1Info = settings.calendarSummary.start1;
     var start2Info = settings.calendarSummary.start2;
     var start3Info = settings.calendarSummary.start3;
+    var startAPInfo = settings.calendarSummary.startAP;
     
     //-- make navbar item for "home" page
     page.navbarlist.appendChild(_makeNavbarItem('home00', '', 'overview of this week-by-week pacing tool', 'home <span class="sr-only">(current)</span>'));
@@ -124,7 +129,7 @@ const app = function () {
       page.navbarlist.appendChild(_makeNavbarItem(_navItemId(start1Info.currentWeekNum), '', title, 'week ' + start1Info.currentWeekNum));
     }
     if (apCourse) {
-      page.navbarlist.appendChild(_makeNavbarItem(_navItemId(start2Info.currentWeekNum), '', 'current week', 'week ' + start2Info.currentWeekNum));
+      page.navbarlist.appendChild(_makeNavbarItem(_navItemId(startAPInfo.currentWeekNum), '', 'current week', 'week ' + startAPInfo.currentWeekNum));
     } else {
       title = 'start2: ' + _formatPacingDate(start2Info.startDate) + '-' + _formatPacingDate(start2Info.endDate);
       page.navbarlist.appendChild(_makeNavbarItem(_navItemId(start2Info.currentWeekNum), '', title, 'week ' + start2Info.currentWeekNum));
@@ -244,7 +249,7 @@ const app = function () {
     elemTitle.innerHTML = fullPacingInfo.pacinginfo.coursename;
     
     var elemContents1 = document.createElement('div');    
-    elemContents1.innerHTML = 'This tool provides week-by-week pacing information for the course<br><br>' + 'According to the pacing guide you should be on';
+    elemContents1.innerHTML = 'This tool provides week-by-week pacing information for the course<br><br>' + 'According to the pacing guide: ';
     
     elemContents.appendChild(elemContents1);
     elemContents.appendChild(_makeHomePageWeekList());
@@ -261,29 +266,47 @@ const app = function () {
     var start1Info = settings.calendarSummary.start1;
     var start2Info = settings.calendarSummary.start2;
     var start3Info = settings.calendarSummary.start3;
+    var startAPInfo = settings.calendarSummary.startAP;
+    var html;
     
     var elemList = document.createElement('ul');
     var elemListItem;
 
     if (!apCourse) {
       elemListItem = document.createElement('li');
-      elemListItem.innerHTML = _formatHomePageWeek(start1Info.currentWeekNum) + ' if the dates of your term are ' +  
-                               _formatPacingDate(start1Info.startDate) + ' - ' + _formatPacingDate(start1Info.endDate)
+      html = 'if the dates of your term are ' + _formatPacingDate(start1Info.startDate) + ' - ' + _formatPacingDate(start1Info.endDate) + ' then ';
+      if (start1Info.notStarted) {
+        html += 'your course hasn\'t started yet. You are welcome to begin the material for ' + _formatHomePageWeek(start1Info.currentWeekNum);
+      } else {
+        html += 'you should be on ' + _formatHomePageWeek(start1Info.currentWeekNum);
+      }      
+      elemListItem.innerHTML = html;
       elemList.appendChild(elemListItem);
     }
     
     elemListItem = document.createElement('li');
-    elemListItem.innerHTML = _formatHomePageWeek(start2Info.currentWeekNum);
-    if (!apCourse) {
-      elemListItem.innerHTML += ' if the dates of your term are ' +  
-                               _formatPacingDate(start2Info.startDate) + ' - ' + _formatPacingDate(start2Info.endDate)
+    if (apCourse) {
+      html = 'you should be on ' + _formatHomePageWeek(startAPInfo.currentWeekNum);
+    } else {
+      html = 'if the dates of your term are ' + _formatPacingDate(start2Info.startDate) + ' - ' + _formatPacingDate(start2Info.endDate) + ' then ';
+      if (start2Info.notStarted) {
+        html += 'your course hasn\'t started yet. You are welcome to begin the material for ' + _formatHomePageWeek(start2Info.currentWeekNum);
+      } else {
+        html += 'you should be on ' + _formatHomePageWeek(start2Info.currentWeekNum);
+      }      
     }
+    elemListItem.innerHTML = html;
     elemList.appendChild(elemListItem);
     
     if (!apCourse) {
       elemListItem = document.createElement('li');
-      elemListItem.innerHTML = _formatHomePageWeek(start3Info.currentWeekNum) + ' if the dates of your term are ' +  
-                               _formatPacingDate(start3Info.startDate) + ' - ' + _formatPacingDate(start3Info.endDate)
+      html = 'if the dates of your term are ' + _formatPacingDate(start3Info.startDate) + ' - ' + _formatPacingDate(start3Info.endDate) + ' then ';
+      if (start3Info.notStarted) {
+        html += 'your course hasn\'t started yet. You are welcome to begin the material for ' + _formatHomePageWeek(start3Info.currentWeekNum);
+      } else {
+        html += 'you should be on ' + _formatHomePageWeek(start3Info.currentWeekNum);
+      }      
+      elemListItem.innerHTML = html;
       elemList.appendChild(elemListItem);
     }    
     
@@ -376,13 +399,20 @@ const app = function () {
 	//-------------------------------------------------------------------------
   function _calculateCurrentWeeks() {
     var calendar = fullPacingInfo.pacingcalendar;
-    var now = new Date();
+    var now = settings.currentDate; //new Date();
+    console.log('"now" = ' + now);
     
     settings.calendarSummary = {};
     
-    for (var i = 0; i < 3; i++) {
+    var maxloop = 3;
+    if (fullPacingInfo.pacinginfo.apcourse) max = 1;
+    for (var i = 0; i < maxloop; i++) {
       var summary = {};
       var key = 'start' + (i + 1);
+      if (fullPacingInfo.pacinginfo.apcourse) {
+        key = 'startAP';
+      }
+        
       var origSummary = calendar[key];
       var numWeeks = termToWeeks[origSummary.term];
       
@@ -397,9 +427,11 @@ const app = function () {
         }
       }
       
+      summary.notStarted = false;
       if (foundWeek == null) {
         foundWeek = new Date(origSummary['week1']);
         foundWeekNum = 1;
+        summary.notStarted = true;
       }
       
       summary.startDate = origSummary.startdate;

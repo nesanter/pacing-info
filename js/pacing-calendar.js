@@ -110,7 +110,7 @@ const app = function () {
       objWeek[currentWeek] = null;
       currentWeek.setDate(currentWeek.getDate() + 7);
     }
-    console.log(JSON.stringify(objWeek));
+    //console.log(JSON.stringify(objWeek));
     return objWeek;
   }
   
