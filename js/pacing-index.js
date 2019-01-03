@@ -407,7 +407,7 @@ const app = function () {
     source += '?term=' + fullPacingInfo.pacingcalendar.start1.term;
     if (fullPacingInfo.pacinginfo.apcourse) source += '&ap';
     source += '&highlight="' + settings.currentDate + '"';
-    console.log(source);
+
     page.calendar.src = source;
   }
   

@@ -71,9 +71,7 @@ const app = function () {
     settings.numweeks = termToWeeks[settings.term];
     settings.ap = params.ap;
     settings.highlightweek = new Date(params.highlightweek);
-    
-    console.log('highlightweeks=' + settings.highlightweek);
-    
+       
     if (params.term != null) {
 			result = true;
 		}
@@ -116,7 +114,7 @@ const app = function () {
       objWeek[currentWeek] = null;
       currentWeek.setDate(currentWeek.getDate() + 7);
     }
-    //console.log(JSON.stringify(objWeek));
+
     return objWeek;
   }
   
@@ -241,8 +239,9 @@ const app = function () {
     var elemRow = document.createElement('tr');
 
     if (settings.highlightweek != null) {
+      var targetWeek = _getMondayOfWeek(settings.highlightweek);
       var weekDate = new Date(week);
-      if (weekDate.getTime() == settings.highlightweek.getTime()) {
+      if (weekDate.getTime() == targetWeek.getTime()) {
         elemRow.classList.add('highlightweek');
       }
     }
@@ -299,6 +298,21 @@ const app = function () {
     return formattedDate;
   }
   
+  function _getMondayOfWeek(target) {
+    var weekday = target.getDay();
+    
+    var adjustDays = 0;
+    if (weekday > 1) {
+      adjustDays = weekday - 1;
+    } else if (weekday == 0) {
+      adjustDays = 6
+    }
+    
+    var monday = new Date(target);
+    monday.setDate(target.getDate() - adjustDays);
+
+    return monday;
+  }
   	
 	//-----------------------------------------------------------------------------------
 	// iframe responsive height - post message to parent (if in an iframe) to resizeBy
