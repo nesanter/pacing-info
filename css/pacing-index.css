@@ -64,6 +64,12 @@ iframe {
   font-weight: bold;
 }
 
+.pidx-homepage #homepageHelpImage {
+  width: 250px;
+  margin-left: 40px;
+  border: 1px solid #AAAAAA;
+}
+
 .pidx-pacing-title {
   background-color: var(--pidx-color-MV-lightteal);
   color: var(--pidx-color2);

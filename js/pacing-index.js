@@ -33,6 +33,8 @@ const app = function () {
     "trimester3": 12,
     "summer": 10
   };
+  
+  const pacingIndexMenuImage = 'https://drive.google.com/uc?id=172L_BNdFQ90jsBvfFTMaeiQ1jP3zGgsQ';
     
   var fullPacingInfo = null;
   
@@ -253,6 +255,7 @@ const app = function () {
     
     elemContents.appendChild(elemContents1);
     elemContents.appendChild(_makeHomePageWeekList());
+    elemContents.appendChild(_renderHomePageMenuHelp());
     
     elemHomePage.appendChild(elemTitle);
     elemHomePage.appendChild(elemContents);
@@ -317,6 +320,23 @@ const app = function () {
     var html = '';
     html += '<span class="pidx-weeknumber">week ' + weeknum + '</span>';
     return html;
+  }
+  
+  function _renderHomePageMenuHelp() {
+    var elemHelp = document.createElement('div');
+    elemHelp.id = 'homepageHelp';
+    
+    var elemHelpInstructions = document.createElement('div');
+    elemHelpInstructions.id = 'homepageHelpInstructions';
+    elemHelpInstructions.innerHTML = 'You can use the menu to access any pacing week.';
+    
+    var elemHelpImage = document.createElement('img');
+    elemHelpImage.id = 'homepageHelpImage';
+    elemHelpImage.src = pacingIndexMenuImage;
+    
+    elemHelp.appendChild(elemHelpInstructions);
+    elemHelp.appendChild(elemHelpImage);
+    return elemHelp;
   }
   
   function _renderPacingDetails() {
