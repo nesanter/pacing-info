@@ -65,7 +65,17 @@ iframe {
 }
 
 .pidx-homepage #homepageHelpImage {
-  width: 250px;
+  width: 160px;
+  margin-left: 40px;
+  border: 1px solid #AAAAAA;
+}
+
+.pidx-homepage #homepageEndDateInstructions {
+  margin-top: 10px;
+}
+
+.pidx-homepage #homepageEndDateImage {
+  width: 360px;
   margin-left: 40px;
   border: 1px solid #AAAAAA;
 }

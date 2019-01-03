@@ -35,6 +35,7 @@ const app = function () {
   };
   
   const pacingIndexMenuImage = 'https://drive.google.com/uc?id=172L_BNdFQ90jsBvfFTMaeiQ1jP3zGgsQ';
+  const pacingIndexFindingEndDateImage = 'https://drive.google.com/uc?id=151gtwdlUPru0wUslqOjPVr_VroCKD1O3';
     
   var fullPacingInfo = null;
   
@@ -271,6 +272,7 @@ const app = function () {
     var start3Info = settings.calendarSummary.start3;
     var startAPInfo = settings.calendarSummary.startAP;
     var html;
+    var atLeastOneHasntStarted = false;
     
     var elemList = document.createElement('ul');
     var elemListItem;
@@ -279,7 +281,8 @@ const app = function () {
       elemListItem = document.createElement('li');
       html = 'if the dates of your term are ' + _formatPacingDate(start1Info.startDate) + ' - ' + _formatPacingDate(start1Info.endDate) + ' then ';
       if (start1Info.notStarted) {
-        html += 'your course hasn\'t started yet. You are welcome to begin the material for ' + _formatHomePageWeek(start1Info.currentWeekNum);
+        html += 'your course hasn\'t started yet.';
+        atLeastOneHasntStarted = true;
       } else {
         html += 'you should be on ' + _formatHomePageWeek(start1Info.currentWeekNum);
       }      
@@ -293,7 +296,8 @@ const app = function () {
     } else {
       html = 'if the dates of your term are ' + _formatPacingDate(start2Info.startDate) + ' - ' + _formatPacingDate(start2Info.endDate) + ' then ';
       if (start2Info.notStarted) {
-        html += 'your course hasn\'t started yet. You are welcome to begin the material for ' + _formatHomePageWeek(start2Info.currentWeekNum);
+        html += 'your course hasn\'t started yet.';
+        atLeastOneHasntStarted = true;
       } else {
         html += 'you should be on ' + _formatHomePageWeek(start2Info.currentWeekNum);
       }      
@@ -305,15 +309,26 @@ const app = function () {
       elemListItem = document.createElement('li');
       html = 'if the dates of your term are ' + _formatPacingDate(start3Info.startDate) + ' - ' + _formatPacingDate(start3Info.endDate) + ' then ';
       if (start3Info.notStarted) {
-        html += 'your course hasn\'t started yet. You are welcome to begin the material for ' + _formatHomePageWeek(start3Info.currentWeekNum);
+        html += 'your course hasn\'t started yet.';
+        atLeastOneHasntStarted = true;
       } else {
         html += 'you should be on ' + _formatHomePageWeek(start3Info.currentWeekNum);
       }      
       elemListItem.innerHTML = html;
       elemList.appendChild(elemListItem);
-    }    
+    }
+
+    var elemContainer = elemList;
     
-    return elemList;
+    if (atLeastOneHasntStarted) {
+      var elemContainer = document.createElement('div');
+      var elemNote = document.createElement('div');
+      elemNote.innerHTML = 'If your course hasn\'t officially started yet your are welcome to begin the material for ' + _formatHomePageWeek(1) + '<br><br>';
+      elemContainer.appendChild(elemList);
+      elemContainer.appendChild(elemNote);
+    }
+    
+    return elemContainer;
   }
   
   function _formatHomePageWeek(weeknum) {
@@ -334,8 +349,19 @@ const app = function () {
     elemHelpImage.id = 'homepageHelpImage';
     elemHelpImage.src = pacingIndexMenuImage;
     
+    var elemEndDateInstructions = document.createElement('div');
+    elemEndDateInstructions.id = 'homepageEndDateInstructions';
+    elemEndDateInstructions.innerHTML = 'You can find your start and end dates in the SLP';
+    
+    var elemEndDateImage = document.createElement('img');
+    elemEndDateImage.id = 'homepageEndDateImage';
+    elemEndDateImage.src = pacingIndexFindingEndDateImage;
+    
     elemHelp.appendChild(elemHelpInstructions);
     elemHelp.appendChild(elemHelpImage);
+    elemHelp.appendChild(elemEndDateInstructions);
+    elemHelp.appendChild(elemEndDateImage);
+    
     return elemHelp;
   }
   
