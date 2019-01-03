@@ -34,8 +34,10 @@ const app = function () {
     "summer": 10
   };
   
+  const pacingIndexMenuLink = 'https://drive.google.com/open?id=172L_BNdFQ90jsBvfFTMaeiQ1jP3zGgsQ';
   const pacingIndexMenuImage = 'https://drive.google.com/uc?id=172L_BNdFQ90jsBvfFTMaeiQ1jP3zGgsQ';
-  const pacingIndexFindingEndDateImage = 'https://drive.google.com/uc?id=151gtwdlUPru0wUslqOjPVr_VroCKD1O3';
+  const pacingIndexFindingEndDateLink = 'https://drive.google.com/open?id=1HIl_0nFL3-9lOJ-cl3KMiOKaU0Lcsvpe';
+  const pacingIndexFindingEndDateImage = 'https://drive.google.com/uc?id=1HIl_0nFL3-9lOJ-cl3KMiOKaU0Lcsvpe';
     
   var fullPacingInfo = null;
   
@@ -345,22 +347,34 @@ const app = function () {
     elemHelpInstructions.id = 'homepageHelpInstructions';
     elemHelpInstructions.innerHTML = 'You can use the menu to access any pacing week.';
     
+    var elemHelpLink = document.createElement('a');
+    elemHelpLink.href = pacingIndexMenuLink;
+    elemHelpLink.target = '_blank';
+    
     var elemHelpImage = document.createElement('img');
     elemHelpImage.id = 'homepageHelpImage';
     elemHelpImage.src = pacingIndexMenuImage;
+    elemHelpImage.title = 'click to see larger image';
+    elemHelpLink.appendChild(elemHelpImage);
     
     var elemEndDateInstructions = document.createElement('div');
     elemEndDateInstructions.id = 'homepageEndDateInstructions';
     elemEndDateInstructions.innerHTML = 'You can find your start and end dates in the SLP';
     
+    var elemEndDateLink = document.createElement('a');
+    elemEndDateLink.href = pacingIndexFindingEndDateLink;
+    elemEndDateLink.target = '_blank';
+    
     var elemEndDateImage = document.createElement('img');
     elemEndDateImage.id = 'homepageEndDateImage';
     elemEndDateImage.src = pacingIndexFindingEndDateImage;
+    elemEndDateImage.title = 'click to see larger image';
+    elemEndDateLink.appendChild(elemEndDateImage);
     
     elemHelp.appendChild(elemHelpInstructions);
-    elemHelp.appendChild(elemHelpImage);
+    elemHelp.appendChild(elemHelpLink);
     elemHelp.appendChild(elemEndDateInstructions);
-    elemHelp.appendChild(elemEndDateImage);
+    elemHelp.appendChild(elemEndDateLink);
     
     return elemHelp;
   }
