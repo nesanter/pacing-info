@@ -201,7 +201,7 @@ const app = function () {
     var endDate = null;
     
     var elemCell = document.createElement('th');
-    elemCell.innerHTML = 'Date';
+    elemCell.innerHTML = 'Date<br>(Monday)';
     elemHeaderRow.appendChild(elemCell);
      
     elemCell = document.createElement('th');
