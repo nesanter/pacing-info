@@ -14,7 +14,8 @@ const app = function () {
 	const settings = {
     term: null,
     numweeks: null,
-    ap: null
+    ap: null,
+    highlightweek: null
 	};
 	
   const termToWeeks = {
@@ -54,6 +55,7 @@ const app = function () {
   //
   //  term: semester1, semester2, trimester1, trimester2, trimester3, summer
   //  ap: if present then use AP calendar info
+  //  highlightweek: date - if present then highlight given week on calendar
 	//-------------------------------------------------------------------------------------
 	function _initializeSettings() {
 		var result = false;
@@ -63,10 +65,14 @@ const app = function () {
 
     params.term = urlParams.has('term') ? urlParams.get('term') : null;
     params.ap = urlParams.has('ap');
-
+    params.highlightweek = urlParams.has('highlight') ? urlParams.get('highlight') : null;
+    
     settings.term = params.term;
     settings.numweeks = termToWeeks[settings.term];
     settings.ap = params.ap;
+    settings.highlightweek = new Date(params.highlightweek);
+    
+    console.log('highlightweeks=' + settings.highlightweek);
     
     if (params.term != null) {
 			result = true;
@@ -233,8 +239,15 @@ const app = function () {
   
   function _renderPacingCalendarRow(week, weekData) {
     var elemRow = document.createElement('tr');
- 
-    var elemCell = document.createElement('td');
+
+    if (settings.highlightweek != null) {
+      var weekDate = new Date(week);
+      if (weekDate.getTime() == settings.highlightweek.getTime()) {
+        elemRow.classList.add('highlightweek');
+      }
+    }
+
+    var elemCell = document.createElement('td');    
     elemCell.innerHTML = _formatPacingWeekDate(week);
     elemRow.appendChild(elemCell);
     

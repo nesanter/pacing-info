@@ -406,6 +406,8 @@ const app = function () {
     var source = 'https://ktsanter.github.io/pacing-info/pacing-calendar.html';
     source += '?term=' + fullPacingInfo.pacingcalendar.start1.term;
     if (fullPacingInfo.pacinginfo.apcourse) source += '&ap';
+    source += '&highlight="' + settings.currentDate + '"';
+    console.log(source);
     page.calendar.src = source;
   }
   
@@ -420,8 +422,7 @@ const app = function () {
   function _calculateCurrentWeeks() {
     var calendar = fullPacingInfo.pacingcalendar;
     var now = settings.currentDate; //new Date();
-    console.log('"now" = ' + now);
-    
+     
     settings.calendarSummary = {};
     
     var maxloop = 3;

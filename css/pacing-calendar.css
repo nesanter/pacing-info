@@ -35,3 +35,8 @@ th, td {
   padding-left: 6px;
   padding-right: 6px;
 }
+
+.highlightweek {
+  background-color: lightblue;
+  font-weight: bold;
+}
