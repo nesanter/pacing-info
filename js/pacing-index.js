@@ -35,7 +35,9 @@ const app = function () {
   };
   
   const pacingIndexMenuLink = 'https://drive.google.com/open?id=172L_BNdFQ90jsBvfFTMaeiQ1jP3zGgsQ';
+  const pacingIndexMenuLinkAP = 'https://drive.google.com/open?id=11qDWqfUHmJK_oZV0EXkuXAv14euIwjMd';
   const pacingIndexMenuImage = 'https://drive.google.com/uc?id=172L_BNdFQ90jsBvfFTMaeiQ1jP3zGgsQ';
+  const pacingIndexMenuImageAP = 'https://drive.google.com/uc?id=11qDWqfUHmJK_oZV0EXkuXAv14euIwjMd';
   const pacingIndexFindingEndDateLink = 'https://drive.google.com/open?id=1HIl_0nFL3-9lOJ-cl3KMiOKaU0Lcsvpe';
   const pacingIndexFindingEndDateImage = 'https://drive.google.com/uc?id=1HIl_0nFL3-9lOJ-cl3KMiOKaU0Lcsvpe';
     
@@ -340,20 +342,29 @@ const app = function () {
   }
   
   function _renderHomePageMenuHelp() {
+    var apCourse = fullPacingInfo.pacinginfo.apcourse;
     var elemHelp = document.createElement('div');
     elemHelp.id = 'homepageHelp';
     
     var elemHelpInstructions = document.createElement('div');
     elemHelpInstructions.id = 'homepageHelpInstructions';
-    elemHelpInstructions.innerHTML = 'You can use the menu to access any pacing week.';
+    elemHelpInstructions.innerHTML = 'You can use the menu to access info for your current pacing week or any other.';
     
     var elemHelpLink = document.createElement('a');
-    elemHelpLink.href = pacingIndexMenuLink;
+    if (apCourse) {
+      elemHelpLink.href = pacingIndexMenuLinkAP;
+    } else {
+      elemHelpLink.href = pacingIndexMenuLink;
+    }
     elemHelpLink.target = '_blank';
     
     var elemHelpImage = document.createElement('img');
     elemHelpImage.id = 'homepageHelpImage';
-    elemHelpImage.src = pacingIndexMenuImage;
+    if (apCourse) {
+      elemHelpImage.src = pacingIndexMenuImageAP;
+    } else {
+      elemHelpImage.src = pacingIndexMenuImage;
+    }
     elemHelpImage.title = 'click to see larger image';
     elemHelpLink.appendChild(elemHelpImage);
     
@@ -373,8 +384,10 @@ const app = function () {
     
     elemHelp.appendChild(elemHelpInstructions);
     elemHelp.appendChild(elemHelpLink);
-    elemHelp.appendChild(elemEndDateInstructions);
-    elemHelp.appendChild(elemEndDateLink);
+    if (!apCourse) {
+      elemHelp.appendChild(elemEndDateInstructions);
+      elemHelp.appendChild(elemEndDateLink);
+    }
     
     return elemHelp;
   }
