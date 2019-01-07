@@ -216,10 +216,14 @@ const app = function () {
     
     if (settings.term != 'summer') {
       elemCell = document.createElement('th');
-      startDate = _formatPacingWeekDate(pacingCalendar.start2.startdate);
-      endDate = _formatPacingWeekDate(pacingCalendar.start2.enddate);
-      elemCell.innerHTML = 'Start: ' + startDate + '<br>';
-      elemCell.innerHTML += 'End: ' + endDate;
+      if (settings.ap) {
+        elemCell.innerHTML = 'Pacing week';
+      } else {
+        startDate = _formatPacingWeekDate(pacingCalendar.start2.startdate);
+        endDate = _formatPacingWeekDate(pacingCalendar.start2.enddate);
+        elemCell.innerHTML = 'Start: ' + startDate + '<br>';
+        elemCell.innerHTML += 'End: ' + endDate;
+      }
       elemHeaderRow.appendChild(elemCell);
     }
 
