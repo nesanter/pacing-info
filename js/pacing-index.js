@@ -328,7 +328,7 @@ const app = function () {
     if (atLeastOneHasntStarted) {
       var elemContainer = document.createElement('div');
       var elemNote = document.createElement('div');
-      elemNote.innerHTML = 'If your course hasn\'t officially started yet your are welcome to begin the material for ' + _formatHomePageWeek(1) + '<br><br>';
+      elemNote.innerHTML = 'If your course hasn\'t officially started yet you are welcome to begin the material for ' + _formatHomePageWeek(1) + '<br><br>';
       elemContainer.appendChild(elemList);
       elemContainer.appendChild(elemNote);
     }
