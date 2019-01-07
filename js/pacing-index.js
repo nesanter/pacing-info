@@ -33,7 +33,8 @@ const app = function () {
     "trimester3": 12,
     "summer": 10
   };
-  
+
+  const pacingCalendarLink = 'https://ktsanter.github.io/pacing-info/pacing-calendar.html';  
   const pacingIndexMenuLink = 'https://drive.google.com/open?id=172L_BNdFQ90jsBvfFTMaeiQ1jP3zGgsQ';
   const pacingIndexMenuLinkAP = 'https://drive.google.com/open?id=11qDWqfUHmJK_oZV0EXkuXAv14euIwjMd';
   const pacingIndexMenuImage = 'https://drive.google.com/uc?id=172L_BNdFQ90jsBvfFTMaeiQ1jP3zGgsQ';
@@ -456,10 +457,11 @@ const app = function () {
     page.calendar.allowfullscreen = true;
     page.calendar.mozallowfullscreen = true;
     page.calendar.webkitallowfullscreen = true;
-    var source = 'https://ktsanter.github.io/pacing-info/pacing-calendar.html';
+    var source = pacingCalendarLink;
     source += '?term=' + fullPacingInfo.pacingcalendar.start1.term;
     if (fullPacingInfo.pacinginfo.apcourse) source += '&ap';
-    source += '&highlight="' + settings.currentDate + '"';
+    source += '&highlight="' + _formatPacingCalendarDate(settings.currentDate) + '"';
+    console.log(source);
 
     page.calendar.src = source;
   }
@@ -586,7 +588,22 @@ const app = function () {
     
     return formattedDate;
   }
+
   
+  function _formatPacingCalendarDate(pacingdate) {
+    var formattedDate = '';
+    
+    if (pacingdate != null & pacingdate != '') {
+      objDate = new Date(pacingdate);
+      var day = objDate.getDate();
+      var month = objDate.getMonth() + 1;
+      var year = objDate.getFullYear();
+      formattedDate = month + "/" + day + "/" + year;
+    }
+    
+    return formattedDate;
+  }
+    
   	
 	//-----------------------------------------------------------------------------------
 	// iframe responsive height - post message to parent (if in an iframe) to resizeBy
