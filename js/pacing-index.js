@@ -325,6 +325,7 @@ const app = function () {
 
     var elemContainer = elemList;
     
+    /*
     if (atLeastOneHasntStarted) {
       var elemContainer = document.createElement('div');
       var elemNote = document.createElement('div');
@@ -332,6 +333,7 @@ const app = function () {
       elemContainer.appendChild(elemList);
       elemContainer.appendChild(elemNote);
     }
+    */
     
     return elemContainer;
   }
