@@ -92,7 +92,10 @@ const app = function () {
     params.instance = urlParams.has('instance') ? urlParams.get('instance') : 1;   // optional - if not provided then assumed 1
     params.awidth = urlParams.has('awidth') ? urlParams.get('awidth') : 600;  // optional - if not provided then the default
     params.aheight = urlParams.has('aheight') ? urlParams.get('aheight') : 450;  // optional - if not provided then the default
-    params.date = urlParams.has('date')? new Date(urlParams.get('date')) : new Date();
+    var dtmp = (urlParams.has('date') ? new Date(urlParams.get('date')) : new Date()).toLocaleString('en-US', {timeZone:'America/Detroit'});
+    params.date = new Date(dtmp);
+		
+    //params.date = urlParams.has('date')? new Date(urlParams.get('date')) : new Date();
 
 		settings.coursekey = params.coursekey;
     settings.term = params.term;
